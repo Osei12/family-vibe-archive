@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import FileUpload from '@/components/FileUpload';
+import DocumentPreview from '@/components/DocumentPreview';
 import { Button } from '@/components/ui/button';
 import { Plus, FileText, Download, Eye, Calendar, User, Folder } from 'lucide-react';
 
@@ -13,6 +13,8 @@ interface Document {
   uploadedBy: string;
   uploadedAt: Date;
   category: 'family' | 'legal' | 'medical' | 'financial' | 'other';
+  url?: string;
+  content?: string;
 }
 
 const mockDocuments: Document[] = [
@@ -24,6 +26,7 @@ const mockDocuments: Document[] = [
     uploadedBy: 'Grandma',
     uploadedAt: new Date('2024-01-20'),
     category: 'family',
+    url: '/placeholder.svg', // Using placeholder for demo
   },
   {
     id: '2',
@@ -33,6 +36,7 @@ const mockDocuments: Document[] = [
     uploadedBy: 'Mom',
     uploadedAt: new Date('2024-01-18'),
     category: 'family',
+    content: 'Sample recipe content for preview...',
   },
 ];
 
@@ -40,6 +44,7 @@ const Documents = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [previewDocument, setPreviewDocument] = useState<Document | null>(null);
 
   const categories = [
     { id: 'all', label: 'All Documents', count: documents.length },
@@ -93,6 +98,33 @@ const Documents = () => {
       case 'medical': return 'bg-green-100 text-green-700';
       case 'financial': return 'bg-yellow-100 text-yellow-700';
       default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const handleViewDocument = (doc: Document) => {
+    setPreviewDocument(doc);
+  };
+
+  const handleDownloadDocument = (doc: Document) => {
+    if (doc.url) {
+      // Create a temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = doc.url;
+      link.download = doc.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else if (doc.content) {
+      // For text-based documents, create a blob and download
+      const blob = new Blob([doc.content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = doc.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
   };
 
@@ -203,6 +235,7 @@ const Documents = () => {
                           variant="outline"
                           size="sm"
                           className="hover:bg-blue-50 hover:border-blue-200"
+                          onClick={() => handleViewDocument(doc)}
                         >
                           <Eye className="h-4 w-4 mr-1" />
                           View
@@ -211,6 +244,7 @@ const Documents = () => {
                           variant="outline"
                           size="sm"
                           className="hover:bg-green-50 hover:border-green-200"
+                          onClick={() => handleDownloadDocument(doc)}
                         >
                           <Download className="h-4 w-4 mr-1" />
                           Download
@@ -238,6 +272,16 @@ const Documents = () => {
           </div>
         </div>
       </div>
+
+      {/* Document Preview Modal */}
+      {previewDocument && (
+        <DocumentPreview
+          document={previewDocument}
+          isOpen={!!previewDocument}
+          onClose={() => setPreviewDocument(null)}
+          onDownload={() => handleDownloadDocument(previewDocument)}
+        />
+      )}
     </div>
   );
 };
