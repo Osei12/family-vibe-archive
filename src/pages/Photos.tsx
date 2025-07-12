@@ -1,38 +1,37 @@
-
-import { useState } from 'react';
-import Navigation from '@/components/Navigation';
-import PhotoGallery from '@/components/PhotoGallery';
-import PhotoMetadataDialog from '@/components/PhotoMetadataDialog';
-import StorageMetrics from '@/components/StorageMetrics';
-import FileUpload from '@/components/FileUpload';
-import { Button } from '@/components/ui/button';
-import { Plus, Upload } from 'lucide-react';
+import { useState } from "react";
+import Navigation from "@/components/Navigation";
+import PhotoGallery from "@/components/PhotoGallery";
+import PhotoMetadataDialog from "@/components/PhotoMetadataDialog";
+import StorageMetrics from "@/components/StorageMetrics";
+import FileUpload from "@/components/FileUpload";
+import { Button } from "@/components/ui/button";
+import { Plus, Upload } from "lucide-react";
 
 // Mock data - in a real app, this would come from a database
 const mockPhotos = [
   {
-    id: '1',
-    url: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop',
-    title: 'Family Cat Mittens',
-    description: 'Our beloved family cat enjoying a sunny afternoon',
-    uploadedBy: 'Sarah',
-    uploadedAt: new Date('2024-01-15'),
+    id: "1",
+    url: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
+    title: "Family Cat Mittens",
+    description: "Our beloved family cat enjoying a sunny afternoon",
+    uploadedBy: "Sarah",
+    uploadedAt: new Date("2024-01-15"),
   },
   {
-    id: '2',
-    url: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=400&fit=crop',
-    title: 'Nature Walk',
-    description: 'Beautiful deer we spotted during our family hike',
-    uploadedBy: 'Dad',
-    uploadedAt: new Date('2024-01-10'),
+    id: "2",
+    url: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=400&fit=crop",
+    title: "Nature Walk",
+    description: "Beautiful deer we spotted during our family hike",
+    uploadedBy: "Dad",
+    uploadedAt: new Date("2024-01-10"),
   },
   {
-    id: '3',
-    url: 'https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop',
-    title: 'Living Room Memories',
-    description: 'Where we gather for movie nights',
-    uploadedBy: 'Mom',
-    uploadedAt: new Date('2024-01-05'),
+    id: "3",
+    url: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
+    title: "Living Room Memories",
+    description: "Where we gather for movie nights",
+    uploadedBy: "Mom",
+    uploadedAt: new Date("2024-01-05"),
   },
 ];
 
@@ -40,7 +39,10 @@ const Photos = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [photos, setPhotos] = useState(mockPhotos);
   const [showMetadataDialog, setShowMetadataDialog] = useState(false);
-  const [pendingFile, setPendingFile] = useState<{file: File, preview: string} | null>(null);
+  const [pendingFile, setPendingFile] = useState<{
+    file: File;
+    preview: string;
+  } | null>(null);
 
   // Mock storage data - would come from backend
   const storageData = {
@@ -55,7 +57,7 @@ const Photos = () => {
       reader.onload = (e) => {
         setPendingFile({
           file,
-          preview: e.target?.result as string
+          preview: e.target?.result as string,
         });
         setShowMetadataDialog(true);
       };
@@ -64,17 +66,20 @@ const Photos = () => {
     setShowUpload(false);
   };
 
-  const handleMetadataSave = (metadata: { title: string; description: string }) => {
+  const handleMetadataSave = (metadata: {
+    title: string;
+    description: string;
+  }) => {
     if (pendingFile) {
       const newPhoto = {
         id: Date.now().toString(),
         url: pendingFile.preview,
         title: metadata.title,
         description: metadata.description,
-        uploadedBy: 'You',
+        uploadedBy: "You",
         uploadedAt: new Date(),
       };
-      setPhotos(prev => [newPhoto, ...prev]);
+      setPhotos((prev) => [newPhoto, ...prev]);
       setPendingFile(null);
     }
   };
@@ -84,20 +89,24 @@ const Photos = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/30 to-orange-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Family Photos</h1>
-            <p className="text-gray-600">Share and cherish your precious moments together</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-neutral-200 mb-2">
+              Family Photos
+            </h1>
+            <p className="text-gray-600 dark:text-neutral-400">
+              Share and cherish your precious moments together
+            </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-            <StorageMetrics 
-              usedStorage={storageData.used} 
+            <StorageMetrics
+              usedStorage={storageData.used}
               totalStorage={storageData.total}
               className="flex-1 lg:w-80"
             />
@@ -129,17 +138,19 @@ const Photos = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div className="text-3xl font-bold text-rose-500 mb-2">{photos.length}</div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="text-3xl font-bold text-rose-500 mb-2">
+              {photos.length}
+            </div>
             <div className="text-gray-600">Total Photos</div>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-3xl font-bold text-blue-500 mb-2">
-              {new Set(photos.map(p => p.uploadedBy)).size}
+              {new Set(photos.map((p) => p.uploadedBy)).size}
             </div>
             <div className="text-gray-600">Contributors</div>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-3xl font-bold text-green-500 mb-2">
               {Math.round((photos.length / 30) * 100)}%
             </div>
@@ -157,8 +168,12 @@ const Photos = () => {
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <Upload className="h-12 w-12 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">No photos yet</h3>
-            <p className="text-gray-600 mb-6">Start building your family photo collection</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              No photos yet
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Start building your family photo collection
+            </p>
             <Button
               onClick={() => setShowUpload(true)}
               className="bg-rose-500 hover:bg-rose-600 text-white"

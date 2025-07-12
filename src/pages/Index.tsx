@@ -12,6 +12,7 @@ import {
   Shield,
   Zap,
   Crown,
+  File,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -50,7 +51,7 @@ const Index = () => {
     { icon: Users, label: "Family Members", value: "12" },
     { icon: Camera, label: "Photos Shared", value: "247" },
     { icon: Heart, label: "Messages of Love", value: "89" },
-    { icon: Star, label: "Special Moments", value: "156" },
+    { icon: File, label: "Documents", value: "156" },
   ];
 
   const pricingPlans = [
@@ -147,7 +148,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
 
       {/* Hero Section - Inspired by TrustLine design */}
@@ -158,7 +159,7 @@ const Index = () => {
           {familyMembers.map((member, index) => (
             <div
               key={member.name}
-              className={`absolute ${member.position} w-24 h-24 p-2 bg-white rounded-full shadow-lg flex items-center justify-center text-2xl animate-bounce`}
+              className={`absolute ${member.position} w-24 h-24 p-2 bg-white dark:bg-pink-700/50 rounded-full shadow-lg flex items-center justify-center text-2xl animate-bounce`}
               style={{
                 animationDelay: `${index * 0.5}s`,
                 animationDuration: "3s",
@@ -241,7 +242,7 @@ const Index = () => {
               <span>Trusted Family Solution</span>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-neutral-300 mb-6">
               Your Family's
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500 relative">
                 Digital Home
@@ -254,10 +255,9 @@ const Index = () => {
               </span>
             </h1>
 
-            <p className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
-              Connect, share, and preserve your most precious family moments in
-              one secure, beautiful space designed for the people who matter
-              most.
+            <p className="text-xl sm:text-2xl text-gray-600 dark:text-neutral-400 max-w-4xl mx-auto leading-relaxed mb-8">
+              Join thousands of families who trust us to keep their memories
+              safe and accessible. Go ahead, it’s FREE to start.
             </p>
 
             {/* Key benefits */}
@@ -422,7 +422,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
-              Everything Your Family Needs
+              Privacy Your Family Deserves
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Our platform brings families closer together with simple,
@@ -456,7 +456,7 @@ const Index = () => {
                   </p>
 
                   <div className="flex items-center text-rose-600 font-medium group-hover:translate-x-2 transition-transform duration-300">
-                    Get Started
+                    Explore
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </div>
                 </div>

@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import Logo from "@/assets/logo/logo-2.webp";
+import LightLogo from "@/assets/logo/logo-2.webp";
+import DarkLogo from "@/assets/logo/logo-3.webp";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,7 +35,8 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <img src={Logo} className="w-24" />
+            <img src={LightLogo} className="w-24 block dark:hidden" />
+            <img src={DarkLogo} className="w-12 hidden dark:block" />
             {/* <Heart className="h-8 w-8 text-rose-500" />
             <span className="text-xl font-semibold text-gray-800 dark:text-gray-100">Family Archive</span> */}
           </div>
