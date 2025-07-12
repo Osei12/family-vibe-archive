@@ -3,6 +3,7 @@ import Navigation from '@/components/Navigation';
 import FileUpload from '@/components/FileUpload';
 import DocumentPreview from '@/components/DocumentPreview';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, FileText, Download, Eye, Calendar, User, Folder } from 'lucide-react';
 
 interface Document {
@@ -26,7 +27,7 @@ const mockDocuments: Document[] = [
     uploadedBy: 'Grandma',
     uploadedAt: new Date('2024-01-20'),
     category: 'family',
-    url: '/placeholder.svg', // Using placeholder for demo
+    url: '/placeholder.svg',
   },
   {
     id: '2',
@@ -44,6 +45,7 @@ const Documents = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [uploadCategory, setUploadCategory] = useState<'family' | 'legal' | 'medical' | 'financial' | 'other'>('other');
   const [previewDocument, setPreviewDocument] = useState<Document | null>(null);
 
   const categories = [
@@ -62,17 +64,22 @@ const Documents = () => {
   const handleFileUpload = (files: File[]) => {
     files.forEach((file) => {
       const newDoc: Document = {
-        id: Date.now().toString(),
+        id: Date.now().toString() + Math.random(),
         name: file.name,
         type: file.type,
         size: file.size,
         uploadedBy: 'You',
         uploadedAt: new Date(),
-        category: 'other',
+        category: uploadCategory,
       };
       setDocuments(prev => [newDoc, ...prev]);
     });
     setShowUpload(false);
+  };
+
+  const handleCategoryUpload = (category: 'family' | 'legal' | 'medical' | 'financial' | 'other') => {
+    setUploadCategory(category);
+    setShowUpload(true);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -107,7 +114,6 @@ const Documents = () => {
 
   const handleDownloadDocument = (doc: Document) => {
     if (doc.url) {
-      // Create a temporary link element to trigger download
       const link = document.createElement('a');
       link.href = doc.url;
       link.download = doc.name;
@@ -115,7 +121,6 @@ const Documents = () => {
       link.click();
       document.body.removeChild(link);
     } else if (doc.content) {
-      // For text-based documents, create a blob and download
       const blob = new Blob([doc.content], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -156,6 +161,25 @@ const Documents = () => {
               <FileText className="h-5 w-5 mr-2 text-blue-500" />
               Upload New Document
             </h2>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Category
+              </label>
+              <Select value={uploadCategory} onValueChange={setUploadCategory}>
+                <SelectTrigger className="w-full max-w-xs">
+                  <SelectValue placeholder="Choose category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="family">Family</SelectItem>
+                  <SelectItem value="legal">Legal</SelectItem>
+                  <SelectItem value="medical">Medical</SelectItem>
+                  <SelectItem value="financial">Financial</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <FileUpload
               onFileSelect={handleFileUpload}
               acceptedTypes=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
@@ -175,20 +199,32 @@ const Documents = () => {
               </h3>
               <div className="space-y-2">
                 {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 flex items-center justify-between ${
-                      selectedCategory === category.id
-                        ? 'bg-blue-50 text-blue-600 border border-blue-200'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span>{category.label}</span>
-                    <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">
-                      {category.count}
-                    </span>
-                  </button>
+                  <div key={category.id} className="space-y-2">
+                    <button
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 flex items-center justify-between ${
+                        selectedCategory === category.id
+                          ? 'bg-blue-50 text-blue-600 border border-blue-200'
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>{category.label}</span>
+                      <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">
+                        {category.count}
+                      </span>
+                    </button>
+                    {category.id !== 'all' && (
+                      <Button
+                        onClick={() => handleCategoryUpload(category.id as any)}
+                        size="sm"
+                        variant="outline"
+                        className="w-full text-xs"
+                      >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Add to {category.label}
+                      </Button>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
