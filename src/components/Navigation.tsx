@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Camera, FileText, MessageCircle, Heart } from 'lucide-react';
+import { Menu, X, Home, Camera, FileText, MessageCircle, Heart, User } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
