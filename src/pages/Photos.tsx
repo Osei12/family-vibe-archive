@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import PhotoGallery from '@/components/PhotoGallery';
+import PhotoMetadataDialog from '@/components/PhotoMetadataDialog';
+import StorageMetrics from '@/components/StorageMetrics';
 import FileUpload from '@/components/FileUpload';
 import { Button } from '@/components/ui/button';
 import { Plus, Upload } from 'lucide-react';
@@ -37,24 +39,48 @@ const mockPhotos = [
 const Photos = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [photos, setPhotos] = useState(mockPhotos);
+  const [showMetadataDialog, setShowMetadataDialog] = useState(false);
+  const [pendingFile, setPendingFile] = useState<{file: File, preview: string} | null>(null);
+
+  // Mock storage data - would come from backend
+  const storageData = {
+    used: 450, // MB
+    total: 1024, // MB (1GB for free plan)
+  };
 
   const handleFileUpload = (files: File[]) => {
-    files.forEach((file) => {
+    const file = files[0]; // Handle one file at a time for metadata collection
+    if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const newPhoto = {
-          id: Date.now().toString(),
-          url: e.target?.result as string,
-          title: file.name.replace(/\.[^/.]+$/, ""),
-          description: '',
-          uploadedBy: 'You',
-          uploadedAt: new Date(),
-        };
-        setPhotos(prev => [newPhoto, ...prev]);
+        setPendingFile({
+          file,
+          preview: e.target?.result as string
+        });
+        setShowMetadataDialog(true);
       };
       reader.readAsDataURL(file);
-    });
+    }
     setShowUpload(false);
+  };
+
+  const handleMetadataSave = (metadata: { title: string; description: string }) => {
+    if (pendingFile) {
+      const newPhoto = {
+        id: Date.now().toString(),
+        url: pendingFile.preview,
+        title: metadata.title,
+        description: metadata.description,
+        uploadedBy: 'You',
+        uploadedAt: new Date(),
+      };
+      setPhotos(prev => [newPhoto, ...prev]);
+      setPendingFile(null);
+    }
+  };
+
+  const handleMetadataCancel = () => {
+    setPendingFile(null);
   };
 
   return (
@@ -63,19 +89,26 @@ const Photos = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Family Photos</h1>
             <p className="text-gray-600">Share and cherish your precious moments together</p>
           </div>
           
-          <Button
-            onClick={() => setShowUpload(!showUpload)}
-            className="bg-rose-500 hover:bg-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Add Photos
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+            <StorageMetrics 
+              usedStorage={storageData.used} 
+              totalStorage={storageData.total}
+              className="flex-1 lg:w-80"
+            />
+            <Button
+              onClick={() => setShowUpload(!showUpload)}
+              className="bg-rose-500 hover:bg-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Photos
+            </Button>
+          </div>
         </div>
 
         {/* Upload Section */}
@@ -88,7 +121,7 @@ const Photos = () => {
             <FileUpload
               onFileSelect={handleFileUpload}
               acceptedTypes="image/*"
-              multiple={true}
+              multiple={false}
               maxSize={5}
             />
           </div>
@@ -116,7 +149,9 @@ const Photos = () => {
 
         {/* Photo Gallery */}
         {photos.length > 0 ? (
-          <PhotoGallery photos={photos} />
+          <div className="max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <PhotoGallery photos={photos} />
+          </div>
         ) : (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -133,6 +168,14 @@ const Photos = () => {
           </div>
         )}
       </div>
+
+      {/* Photo Metadata Dialog */}
+      <PhotoMetadataDialog
+        isOpen={showMetadataDialog}
+        onClose={handleMetadataCancel}
+        onSave={handleMetadataSave}
+        imagePreview={pendingFile?.preview}
+      />
     </div>
   );
 };

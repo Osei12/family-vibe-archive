@@ -1,7 +1,6 @@
-
 import { Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
-import { Camera, FileText, MessageCircle, Heart, Users, Star, ArrowRight } from 'lucide-react';
+import { Camera, FileText, MessageCircle, Heart, Users, Star, ArrowRight, Check, Shield, Zap, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -39,40 +38,199 @@ const Index = () => {
     { icon: Star, label: 'Special Moments', value: '156' },
   ];
 
+  const pricingPlans = [
+    {
+      name: 'Free',
+      price: '$0',
+      period: '/month',
+      description: 'Perfect for small families just getting started',
+      storage: '1GB Storage',
+      features: [
+        'Up to 5 family members',
+        'Basic photo sharing',
+        'Simple document storage',
+        'Community support'
+      ],
+      icon: Heart,
+      popular: false
+    },
+    {
+      name: 'Standard',
+      price: '$9',
+      period: '/month',
+      description: 'Great for growing families with more content',
+      storage: '50GB Storage',
+      features: [
+        'Up to 15 family members',
+        'Advanced photo gallery',
+        'Document categorization',
+        'Message scheduling',
+        'Priority support',
+        'Family activity tracking'
+      ],
+      icon: Shield,
+      popular: true
+    },
+    {
+      name: 'Premium',
+      price: '$19',
+      period: '/month',
+      description: 'Everything you need for large families',
+      storage: '500GB Storage',
+      features: [
+        'Unlimited family members',
+        'Advanced admin controls',
+        'Custom categories',
+        'Bulk upload tools',
+        'Advanced analytics',
+        '24/7 priority support',
+        'Custom branding'
+      ],
+      icon: Crown,
+      popular: false
+    }
+  ];
+
+  // Family member avatars for the hero section
+  const familyMembers = [
+    { name: 'Mom', avatar: '👩', position: 'top-20 left-20' },
+    { name: 'Dad', avatar: '👨', position: 'top-32 left-80' },
+    { name: 'Emma', avatar: '👧', position: 'top-16 right-24' },
+    { name: 'Jake', avatar: '👦', position: 'top-40 right-16' },
+    { name: 'Grandma', avatar: '👵', position: 'bottom-32 left-16' },
+    { name: 'Grandpa', avatar: '👴', position: 'bottom-20 right-32' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 to-orange-50/50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="mb-8">
-            <Heart className="h-16 w-16 text-rose-500 mx-auto mb-6" />
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
-              Welcome to Our
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500">
-                Family Archive
-              </span>
-            </h1>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              A beautiful, safe space where our family comes together to share memories, 
-              documents, and words of love and encouragement. Every moment matters, every story counts.
-            </p>
+      {/* Hero Section - Inspired by TrustLine design */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Floating family member avatars */}
+          {familyMembers.map((member, index) => (
+            <div
+              key={member.name}
+              className={`absolute ${member.position} w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center text-2xl animate-bounce`}
+              style={{ 
+                animationDelay: `${index * 0.5}s`,
+                animationDuration: '3s'
+              }}
+            >
+              {member.avatar}
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-600 whitespace-nowrap">
+                {member.name}
+              </div>
+            </div>
+          ))}
+          
+          {/* Connecting lines between family members */}
+          <div className="absolute inset-0">
+            <svg className="w-full h-full opacity-20" viewBox="0 0 1000 600">
+              <path
+                d="M200 200 Q400 100 600 200 T800 300"
+                stroke="url(#gradient)"
+                strokeWidth="2"
+                fill="none"
+                className="animate-pulse"
+              />
+              <path
+                d="M150 400 Q500 300 750 400"
+                stroke="url(#gradient)"
+                strokeWidth="2"
+                fill="none"
+                className="animate-pulse"
+                style={{ animationDelay: '1s' }}
+              />
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="rgb(244 63 94)" stopOpacity="0.3" />
+                  <stop offset="50%" stopColor="rgb(236 72 153)" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="rgb(244 63 94)" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          {/* Floating heart icons */}
+          <div className="absolute top-1/4 left-1/4 text-rose-300 animate-pulse">
+            <Heart className="h-6 w-6" />
+          </div>
+          <div className="absolute top-1/3 right-1/3 text-pink-300 animate-pulse" style={{ animationDelay: '2s' }}>
+            <Heart className="h-4 w-4" />
+          </div>
+          <div className="absolute bottom-1/4 right-1/4 text-rose-400 animate-pulse" style={{ animationDelay: '1s' }}>
+            <Heart className="h-5 w-5" />
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <div className="mb-12 animate-fade-in">
+            {/* Trust indicator */}
+            <div className="inline-flex items-center space-x-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+              <Shield className="h-4 w-4" />
+              <span>Trusted Family Solution</span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
+              Your Family's
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500 relative">
+                Digital Home
+                <div className="absolute -right-8 -top-4 text-2xl animate-bounce" style={{ animationDelay: '0.5s' }}>
+                  🏠
+                </div>
+              </span>
+            </h1>
+            
+            <p className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
+              Connect, share, and preserve your most precious family moments in one secure, 
+              beautiful space designed for the people who matter most.
+            </p>
+
+            {/* Key benefits */}
+            <div className="flex flex-wrap justify-center gap-6 mb-12">
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-gray-700 font-medium">Secure & Private</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-gray-700 font-medium">Easy to Use</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span className="text-gray-700 font-medium">Always Connected</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
             <Link to="/photos">
-              <Button className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                Start Exploring
+              <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 rounded-xl">
+                Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Button 
               variant="outline" 
-              className="px-8 py-3 text-lg border-gray-300 hover:bg-gray-50"
+              className="px-8 py-4 text-lg font-semibold border-2 border-gray-200 hover:bg-gray-50 hover:scale-105 transition-all duration-300 rounded-xl"
             >
-              Learn More
+              View Live Demo
             </Button>
+          </div>
+
+          {/* Trust indicators */}
+          <div className="mt-16 flex justify-center items-center space-x-8 opacity-60">
+            <div className="text-sm text-gray-500">Trusted by 10,000+ families</div>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <div className="flex items-center space-x-1">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              ))}
+              <span className="text-sm text-gray-500 ml-2">4.9/5 rating</span>
+            </div>
           </div>
         </div>
       </section>
@@ -82,7 +240,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
+              <div key={index} className="text-center animate-fade-in hover:scale-105 transition-transform duration-300" style={{ animationDelay: `${index * 0.1}s` }}>
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl mb-4">
                   <stat.icon className="h-6 w-6 text-rose-600" />
                 </div>
@@ -94,10 +252,76 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+              Choose Your Family Plan
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Select the perfect plan for your family's needs. Upgrade or downgrade anytime.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {pricingPlans.map((plan, index) => (
+              <div 
+                key={plan.name} 
+                className={`relative bg-white rounded-2xl p-8 shadow-lg border-2 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 animate-fade-in ${
+                  plan.popular 
+                    ? 'border-rose-500 scale-105' 
+                    : 'border-gray-200 hover:border-rose-300'
+                }`}
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-rose-500 text-white px-4 py-2 text-sm font-medium rounded-full shadow-lg">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                
+                <div className="text-center mb-8">
+                  <plan.icon className={`h-12 w-12 mx-auto mb-4 ${plan.popular ? 'text-rose-500' : 'text-gray-600'}`} />
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
+                  <div className="flex items-baseline justify-center">
+                    <span className="text-4xl font-bold text-gray-800">{plan.price}</span>
+                    <span className="text-gray-600 ml-1">{plan.period}</span>
+                  </div>
+                  <p className="text-sm font-medium text-rose-600 mt-2">{plan.storage}</p>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-center">
+                      <Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                      <span className="text-gray-600">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Button 
+                  className={`w-full ${
+                    plan.popular 
+                      ? 'bg-rose-500 hover:bg-rose-600 text-white' 
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                  }`}
+                >
+                  {plan.name === 'Free' ? 'Get Started' : 'Choose Plan'}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
               Everything Your Family Needs
             </h2>
@@ -110,7 +334,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Link key={index} to={feature.link} className="group">
-                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className={`inline-flex items-center justify-center w-16 h-16 ${feature.lightColor} rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
                     <feature.icon className={`h-8 w-8 text-${feature.color.split('-')[1]}-600`} />
                   </div>
@@ -136,7 +360,7 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-rose-500 to-pink-500">
-        <div className="max-w-4xl mx-auto text-center text-white">
+        <div className="max-w-4xl mx-auto text-center text-white animate-fade-in">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
             Ready to Start Building Memories?
           </h2>
@@ -145,14 +369,14 @@ const Index = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/photos">
-              <Button className="bg-white text-rose-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg">
+              <Button className="bg-white text-rose-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg hover:scale-105 transition-all duration-300">
                 Upload Your First Photo
               </Button>
             </Link>
             <Link to="/messages">
               <Button 
                 variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-rose-600 px-8 py-3 text-lg font-semibold"
+                className="border-white text-white hover:bg-white hover:text-rose-600 px-8 py-3 text-lg font-semibold hover:scale-105 transition-all duration-300"
               >
                 Share a Message
               </Button>
