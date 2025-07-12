@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { Camera, FileText, MessageCircle, Heart, Users, Star, ArrowRight, Check, Shield, Zap, Crown } from 'lucide-react';
@@ -92,41 +91,146 @@ const Index = () => {
     }
   ];
 
+  // Family member avatars for the hero section
+  const familyMembers = [
+    { name: 'Mom', avatar: '👩', position: 'top-20 left-20' },
+    { name: 'Dad', avatar: '👨', position: 'top-32 left-80' },
+    { name: 'Emma', avatar: '👧', position: 'top-16 right-24' },
+    { name: 'Jake', avatar: '👦', position: 'top-40 right-16' },
+    { name: 'Grandma', avatar: '👵', position: 'bottom-32 left-16' },
+    { name: 'Grandpa', avatar: '👴', position: 'bottom-20 right-32' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 to-orange-50/50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-pink-500/10 animate-pulse"></div>
+      {/* Hero Section - Inspired by TrustLine design */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Floating family member avatars */}
+          {familyMembers.map((member, index) => (
+            <div
+              key={member.name}
+              className={`absolute ${member.position} w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center text-2xl animate-bounce`}
+              style={{ 
+                animationDelay: `${index * 0.5}s`,
+                animationDuration: '3s'
+              }}
+            >
+              {member.avatar}
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-600 whitespace-nowrap">
+                {member.name}
+              </div>
+            </div>
+          ))}
+          
+          {/* Connecting lines between family members */}
+          <div className="absolute inset-0">
+            <svg className="w-full h-full opacity-20" viewBox="0 0 1000 600">
+              <path
+                d="M200 200 Q400 100 600 200 T800 300"
+                stroke="url(#gradient)"
+                strokeWidth="2"
+                fill="none"
+                className="animate-pulse"
+              />
+              <path
+                d="M150 400 Q500 300 750 400"
+                stroke="url(#gradient)"
+                strokeWidth="2"
+                fill="none"
+                className="animate-pulse"
+                style={{ animationDelay: '1s' }}
+              />
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="rgb(244 63 94)" stopOpacity="0.3" />
+                  <stop offset="50%" stopColor="rgb(236 72 153)" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="rgb(244 63 94)" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Floating heart icons */}
+          <div className="absolute top-1/4 left-1/4 text-rose-300 animate-pulse">
+            <Heart className="h-6 w-6" />
+          </div>
+          <div className="absolute top-1/3 right-1/3 text-pink-300 animate-pulse" style={{ animationDelay: '2s' }}>
+            <Heart className="h-4 w-4" />
+          </div>
+          <div className="absolute bottom-1/4 right-1/4 text-rose-400 animate-pulse" style={{ animationDelay: '1s' }}>
+            <Heart className="h-5 w-5" />
+          </div>
+        </div>
+
         <div className="max-w-7xl mx-auto text-center relative z-10">
-          <div className="mb-8 animate-fade-in">
-            <Heart className="h-16 w-16 text-rose-500 mx-auto mb-6 animate-bounce" />
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-800 mb-6 animate-scale-in">
-              Welcome to Our
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500">
-                Family Archive
+          <div className="mb-12 animate-fade-in">
+            {/* Trust indicator */}
+            <div className="inline-flex items-center space-x-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+              <Shield className="h-4 w-4" />
+              <span>Trusted Family Solution</span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
+              Your Family's
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-500 relative">
+                Digital Home
+                <div className="absolute -right-8 -top-4 text-2xl animate-bounce" style={{ animationDelay: '0.5s' }}>
+                  🏠
+                </div>
               </span>
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              A beautiful, safe space where our family comes together to share memories, 
-              documents, and words of love and encouragement. Every moment matters, every story counts.
+            
+            <p className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
+              Connect, share, and preserve your most precious family moments in one secure, 
+              beautiful space designed for the people who matter most.
             </p>
+
+            {/* Key benefits */}
+            <div className="flex flex-wrap justify-center gap-6 mb-12">
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-gray-700 font-medium">Secure & Private</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-gray-700 font-medium">Easy to Use</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span className="text-gray-700 font-medium">Always Connected</span>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
             <Link to="/photos">
-              <Button className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                Start Exploring
+              <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 rounded-xl">
+                Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Button 
               variant="outline" 
-              className="px-8 py-3 text-lg border-gray-300 hover:bg-gray-50 hover:scale-105 transition-all duration-300"
+              className="px-8 py-4 text-lg font-semibold border-2 border-gray-200 hover:bg-gray-50 hover:scale-105 transition-all duration-300 rounded-xl"
             >
-              Learn More
+              View Live Demo
             </Button>
+          </div>
+
+          {/* Trust indicators */}
+          <div className="mt-16 flex justify-center items-center space-x-8 opacity-60">
+            <div className="text-sm text-gray-500">Trusted by 10,000+ families</div>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <div className="flex items-center space-x-1">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              ))}
+              <span className="text-sm text-gray-500 ml-2">4.9/5 rating</span>
+            </div>
           </div>
         </div>
       </section>
