@@ -166,7 +166,7 @@ const Documents = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Category
               </label>
-              <Select value={uploadCategory} onValueChange={setUploadCategory}>
+              <Select value={uploadCategory} onValueChange={(value) => setUploadCategory(value as 'family' | 'legal' | 'medical' | 'financial' | 'other')}>
                 <SelectTrigger className="w-full max-w-xs">
                   <SelectValue placeholder="Choose category" />
                 </SelectTrigger>

@@ -60,7 +60,7 @@ const PinAuth = ({ isOpen, onAuthenticated, onLogout }: PinAuthProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md" hideCloseButton>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
           <div className="mx-auto mb-4 w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center">
             <Shield className="h-6 w-6 text-rose-600" />
