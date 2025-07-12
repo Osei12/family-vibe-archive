@@ -53,10 +53,10 @@ const Messages = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const categories = [
-    { id: 'encouragement', label: '💪 Encouragement', color: 'bg-blue-100 text-blue-700' },
-    { id: 'memory', label: '📸 Memory', color: 'bg-purple-100 text-purple-700' },
-    { id: 'gratitude', label: '🙏 Gratitude', color: 'bg-green-100 text-green-700' },
-    { id: 'celebration', label: '🎉 Celebration', color: 'bg-yellow-100 text-yellow-700' },
+    { id: 'encouragement', label: '💪 Encouragement', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' },
+    { id: 'memory', label: '📸 Memory', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' },
+    { id: 'gratitude', label: '🙏 Gratitude', color: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
+    { id: 'celebration', label: '🎉 Celebration', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,18 +87,22 @@ const Messages = () => {
     ));
   };
 
+  const handleDelete = (messageId: string) => {
+    setMessages(messages.filter(msg => msg.id !== messageId));
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center justify-center">
             <Heart className="h-8 w-8 mr-3 text-rose-500" />
             Family Messages
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Share words of encouragement, memories, gratitude, and celebrations with your loved ones
           </p>
         </div>
@@ -116,15 +120,15 @@ const Messages = () => {
 
         {/* Compose Form */}
         {showCompose && (
-          <div className="mb-8 bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div className="mb-8 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 animate-fade-in">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
               <Sparkles className="h-5 w-5 mr-2 text-rose-500" />
               Share Your Heart
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Category (optional)
                 </label>
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -136,7 +140,7 @@ const Messages = () => {
                       className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
                         selectedCategory === cat.id
                           ? cat.color + ' border-current'
-                          : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                          : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
                       }`}
                     >
                       {cat.label}
@@ -150,7 +154,7 @@ const Messages = () => {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Share your thoughts, memories, or words of encouragement..."
-                  className="min-h-[120px] resize-none border-gray-200 focus:border-rose-300 focus:ring-rose-200"
+                  className="min-h-[120px] resize-none border-gray-200 focus:border-rose-300 focus:ring-rose-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
 
@@ -183,15 +187,16 @@ const Messages = () => {
                 key={message.id}
                 message={message}
                 onLike={handleLike}
+                onDelete={handleDelete}
               />
             ))
           ) : (
             <div className="text-center py-16">
-              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Heart className="h-12 w-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No messages yet</h3>
-              <p className="text-gray-600 mb-6">Start sharing love and encouragement with your family</p>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No messages yet</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">Start sharing love and encouragement with your family</p>
               <Button
                 onClick={() => setShowCompose(true)}
                 className="bg-rose-500 hover:bg-rose-600 text-white"

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,8 @@ import {
   Calendar,
   Eye
 } from 'lucide-react';
+import { InviteMemberDialog } from '@/components/InviteMemberDialog';
+import { MemberProfileDialog } from '@/components/MemberProfileDialog';
 
 // Mock data for family members
 const mockFamilyMembers = [
@@ -82,25 +83,22 @@ const Admin = () => {
   };
 
   const getRoleColor = (role: string) => {
-    return role === 'Admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800';
+    return role === 'Admin' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/30 to-orange-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50/30 to-orange-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Family Management</h1>
-            <p className="text-gray-600">Manage family members and monitor activities</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Family Management</h1>
+            <p className="text-gray-600 dark:text-gray-300">Manage family members and monitor activities</p>
           </div>
           
-          <Button className="bg-rose-500 hover:bg-rose-600 text-white">
-            <Users className="h-5 w-5 mr-2" />
-            Invite Member
-          </Button>
+          <InviteMemberDialog />
         </div>
 
         {/* Overview Stats */}
@@ -168,30 +166,30 @@ const Admin = () => {
         </div>
 
         {/* Family Members List */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-800">Family Members</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Family Members</h2>
           </div>
           
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {filteredMembers.map((member) => (
-              <div key={member.id} className="p-6 hover:bg-gray-50 transition-colors">
+              <div key={member.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-full flex items-center justify-center">
-                      <span className="text-rose-600 font-semibold text-lg">
+                    <div className="w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900 dark:to-pink-900 rounded-full flex items-center justify-center">
+                      <span className="text-rose-600 dark:text-rose-300 font-semibold text-lg">
                         {member.name.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
                     
                     <div>
-                      <h3 className="font-semibold text-gray-800">{member.name}</h3>
-                      <p className="text-gray-600 text-sm">{member.email}</p>
+                      <h3 className="font-semibold text-gray-800 dark:text-gray-100">{member.name}</h3>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm">{member.email}</p>
                       <div className="flex items-center space-x-2 mt-1">
                         <Badge className={getRoleColor(member.role)}>
                           {member.role}
                         </Badge>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           Joined {member.joinedAt.toLocaleDateString()}
                         </span>
                       </div>
@@ -202,34 +200,27 @@ const Admin = () => {
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-1">
                         <Camera className="h-4 w-4 text-gray-400" />
-                        <span>{member.activities.photos}</span>
+                        <span className="dark:text-gray-300">{member.activities.photos}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <FileText className="h-4 w-4 text-gray-400" />
-                        <span>{member.activities.documents}</span>
+                        <span className="dark:text-gray-300">{member.activities.documents}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <MessageCircle className="h-4 w-4 text-gray-400" />
-                        <span>{member.activities.messages}</span>
+                        <span className="dark:text-gray-300">{member.activities.messages}</span>
                       </div>
                     </div>
                     
                     <div className="text-right">
-                      <div className="text-gray-600">{formatStorage(member.storageUsed)}</div>
-                      <div className="text-xs text-gray-500 flex items-center">
+                      <div className="text-gray-600 dark:text-gray-300">{formatStorage(member.storageUsed)}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                         <Calendar className="h-3 w-3 mr-1" />
                         Last active {member.lastActive.toLocaleDateString()}
                       </div>
                     </div>
                     
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setSelectedMember(member.id)}
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      View Details
-                    </Button>
+                    <MemberProfileDialog member={member} />
                   </div>
                 </div>
               </div>
