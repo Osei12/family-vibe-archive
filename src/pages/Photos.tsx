@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import PhotoGallery from "@/components/PhotoGallery";
 import PhotoMetadataDialog from "@/components/PhotoMetadataDialog";
 import StorageMetrics from "@/components/StorageMetrics";
 import FileUploadWithProgress from "@/components/FileUploadWithProgress";
 import BulkActions from "@/components/BulkActions";
+import PhotoFilters from "@/components/PhotoFilters";
+import ShareDialog from "@/components/ShareDialog";
 import { Button } from "@/components/ui/button";
-import { Plus, Upload } from "lucide-react";
+import { Plus, Upload, Download, Share2 } from "lucide-react";
 
 // Mock data - in a real app, this would come from a database
 const mockPhotos = [
@@ -39,9 +41,14 @@ const mockPhotos = [
 const Photos = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [photos, setPhotos] = useState(mockPhotos);
+  const [filteredPhotos, setFilteredPhotos] = useState(mockPhotos);
   const [showMetadataDialog, setShowMetadataDialog] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<Array<{file: File; preview: string}>>([]);
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const photosPerPage = 12;
 
   // Mock storage data - would come from backend
   const storageData = {
@@ -116,6 +123,99 @@ const Photos = () => {
     });
   };
 
+  const handleFilterChange = (filters: any) => {
+    let filtered = [...photos];
+
+    // Apply search filter
+    if (filters.search) {
+      filtered = filtered.filter(photo => 
+        photo.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+        photo.description?.toLowerCase().includes(filters.search.toLowerCase())
+      );
+    }
+
+    // Apply uploader filter
+    if (filters.uploadedBy) {
+      filtered = filtered.filter(photo => photo.uploadedBy === filters.uploadedBy);
+    }
+
+    // Apply date filter
+    if (filters.dateRange) {
+      const now = new Date();
+      const filterDate = new Date();
+      
+      switch (filters.dateRange) {
+        case 'today':
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'week':
+          filterDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          filterDate.setMonth(now.getMonth() - 1);
+          break;
+        case 'year':
+          filterDate.setFullYear(now.getFullYear() - 1);
+          break;
+      }
+      
+      if (filters.dateRange !== '') {
+        filtered = filtered.filter(photo => photo.uploadedAt >= filterDate);
+      }
+    }
+
+    // Apply sorting
+    switch (filters.sortBy) {
+      case 'newest':
+        filtered.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
+        break;
+      case 'oldest':
+        filtered.sort((a, b) => a.uploadedAt.getTime() - b.uploadedAt.getTime());
+        break;
+      case 'name':
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+    }
+
+    setFilteredPhotos(filtered);
+    setCurrentPage(1);
+  };
+
+  const loadMorePhotos = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setCurrentPage(prev => prev + 1);
+      setLoading(false);
+    }, 1000); // Simulate loading
+  };
+
+  const displayedPhotos = filteredPhotos.slice(0, currentPage * photosPerPage);
+  const hasMore = displayedPhotos.length < filteredPhotos.length;
+
+  const handlePhotoShare = (photo: any) => {
+    return (
+      <ShareDialog
+        title={photo.title}
+        content={`Check out this photo: ${photo.description || ''}`}
+        url={photo.url}
+      >
+        <Button variant="outline" size="sm">
+          <Share2 className="h-4 w-4 mr-2" />
+          Share
+        </Button>
+      </ShareDialog>
+    );
+  };
+
+  const handlePhotoDownload = (photo: any) => {
+    const link = document.createElement('a');
+    link.href = photo.url;
+    link.download = `${photo.title}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
@@ -164,10 +264,13 @@ const Photos = () => {
           </div>
         )}
 
+        {/* Photo Filters */}
+        <PhotoFilters onFilterChange={handleFilterChange} />
+
         {/* Bulk Actions */}
-        {photos.length > 0 && (
+        {filteredPhotos.length > 0 && (
           <BulkActions
-            items={photos}
+            items={filteredPhotos}
             selectedItems={selectedPhotos}
             onSelectionChange={setSelectedPhotos}
             onBulkDownload={handleBulkDownload}
@@ -199,10 +302,53 @@ const Photos = () => {
           </div>
         </div>
 
-        {/* Photo Gallery */}
-        {photos.length > 0 ? (
-          <div className="max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <PhotoGallery photos={photos} onRemove={handlePhotoRemove} />
+        {/* Photo Gallery with Infinite Scroll */}
+        {displayedPhotos.length > 0 ? (
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+              {displayedPhotos.map((photo) => (
+                <div key={photo.id} className="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
+                  <img
+                    src={photo.url}
+                    alt={photo.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <h3 className="text-white text-sm font-medium truncate mb-2">
+                      {photo.title}
+                    </h3>
+                    <div className="flex items-center justify-between">
+                      <p className="text-white/80 text-xs">by {photo.uploadedBy}</p>
+                      <div className="flex space-x-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handlePhotoDownload(photo)}
+                          className="text-white hover:bg-white/20 h-8 w-8 p-0"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        {handlePhotoShare(photo)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Load More Button */}
+            {hasMore && (
+              <div className="text-center">
+                <Button
+                  onClick={loadMorePhotos}
+                  disabled={loading}
+                  className="bg-rose-500 hover:bg-rose-600 text-white"
+                >
+                  {loading ? "Loading..." : "Load More Photos"}
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center py-16">

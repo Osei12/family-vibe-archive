@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -11,7 +12,7 @@ import {
   User,
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import UserDropdown from "./UserDropdown";
 import LightLogo from "@/assets/logo/logo-2.webp";
 import DarkLogo from "@/assets/logo/logo-3.webp";
 
@@ -37,8 +38,6 @@ const Navigation = () => {
           <div className="flex items-center space-x-2">
             <img src={LightLogo} className="w-24 block dark:hidden" />
             <img src={DarkLogo} className="w-12 hidden dark:block" />
-            {/* <Heart className="h-8 w-8 text-rose-500" />
-            <span className="text-xl font-semibold text-gray-800 dark:text-gray-100">Family Archive</span> */}
           </div>
 
           {/* Desktop Navigation */}
@@ -62,13 +61,7 @@ const Navigation = () => {
           {/* Right side items */}
           <div className="hidden md:flex items-center space-x-3">
             <ThemeToggle />
-            <Link to="/profile">
-              <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-rose-500 transition-all">
-                <AvatarFallback className="bg-rose-100 text-rose-600 text-sm dark:bg-rose-900 dark:text-rose-300">
-                  SJ
-                </AvatarFallback>
-              </Avatar>
-            </Link>
+            <UserDropdown />
           </div>
 
           {/* Mobile menu button */}

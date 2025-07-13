@@ -4,6 +4,7 @@ import MessageCard from "@/components/MessageCard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Send, Heart, Sparkles } from "lucide-react";
+import ShareDialog from "@/components/ShareDialog";
 
 interface Message {
   id: string;
@@ -209,12 +210,47 @@ const Messages = () => {
         <div className="space-y-6">
           {messages.length > 0 ? (
             messages.map((message) => (
-              <MessageCard
-                key={message.id}
-                message={message}
-                onLike={handleLike}
-                onDelete={handleDelete}
-              />
+              <div key={message.id} className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+                {/* Message Content */}
+                <div className="mb-4">
+                  {message.category && (
+                    <div className="mb-3">
+                      <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
+                        categories.find(cat => cat.id === message.category)?.color || 
+                        "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                      }`}>
+                        {categories.find(cat => cat.id === message.category)?.label || message.category}
+                      </span>
+                    </div>
+                  )}
+                  <p className="text-gray-800 dark:text-gray-100 leading-relaxed mb-4">
+                    {message.content}
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center space-x-4">
+                      <span className="font-medium">{message.author}</span>
+                      <span>{message.createdAt.toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => handleLike(message.id)}
+                        className="flex items-center space-x-1 text-gray-500 hover:text-rose-500 transition-colors"
+                      >
+                        <Heart className="h-4 w-4" />
+                        <span>{message.likes}</span>
+                      </button>
+                      <ShareDialog
+                        title={`Message from ${message.author}`}
+                        content={message.content}
+                      >
+                        <Button variant="ghost" size="sm">
+                          Share
+                        </Button>
+                      </ShareDialog>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))
           ) : (
             <div className="text-center py-16">
