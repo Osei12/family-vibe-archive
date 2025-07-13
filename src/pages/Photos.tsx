@@ -137,8 +137,8 @@ const Photos = () => {
           </div>
           
           <FileUploadWithProgress
-            onUpload={(files) => console.log('Uploading photos:', files)}
-            acceptedFileTypes="image/*"
+            onFileSelect={(files) => console.log('Uploading photos:', files)}
+            acceptedTypes="image/*"
             multiple
           />
         </div>
@@ -189,10 +189,7 @@ const Photos = () => {
 
           {showFilters && (
             <PhotoFilters
-              filters={filters}
-              onFiltersChange={setFilters}
-              availableUploaders={Array.from(new Set(mockPhotos.map(p => p.uploadedBy)))}
-              availableTags={Array.from(new Set(mockPhotos.flatMap(p => p.tags)))}
+              onFilterChange={setFilters}
             />
           )}
         </div>
@@ -200,12 +197,11 @@ const Photos = () => {
         {/* Bulk Actions */}
         {selectedPhotos.length > 0 && (
           <BulkActions
-            selectedCount={selectedPhotos.length}
-            totalCount={filteredPhotos.length}
+            items={selectedPhotos}
             onSelectAll={handleSelectAll}
-            onDownload={handleBulkDownload}
+            onAction={handleBulkDownload}
             onDelete={handleBulkDelete}
-            onClearSelection={() => setSelectedPhotos([])}
+            onClear={() => setSelectedPhotos([])}
           />
         )}
 
@@ -261,7 +257,6 @@ const Photos = () => {
         {/* Photo Gallery */}
         <PhotoGallery 
           photos={filteredPhotos}
-          viewMode={viewMode}
           selectedPhotos={selectedPhotos}
           onPhotoSelect={handlePhotoSelect}
         />

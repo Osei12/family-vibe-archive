@@ -119,7 +119,7 @@ export function AdminSidebar() {
   };
 
   return (
-    <Sidebar className={state === "collapsed" ? "w-14" : "w-64"} collapsible>
+    <Sidebar className={state === "collapsed" ? "w-14" : "w-64"} collapsible="icon">
       <SidebarContent>
         {/* Management Section */}
         <SidebarGroup>

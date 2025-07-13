@@ -15,7 +15,7 @@ import {
   MoreHorizontal
 } from 'lucide-react';
 import MessageCard from '@/components/MessageCard';
-import ShareMessageDialog from '@/components/ShareMessageDialog';
+import { ShareMessageDialog } from '@/components/ShareMessageDialog';
 
 // Mock data for family messages
 const mockMessages = [
@@ -24,8 +24,10 @@ const mockMessages = [
     author: 'Sarah Johnson',
     content: 'Just wanted to share this beautiful sunset photo from our vacation! The colors were absolutely stunning tonight. Hope everyone is doing well! 🌅',
     timestamp: new Date('2024-01-15T18:30:00'),
+    createdAt: new Date('2024-01-15T18:30:00'),
     likes: 12,
     replies: 3,
+    comments: 3,
     avatar: 'SJ',
     attachments: ['sunset.jpg']
   },
@@ -34,8 +36,10 @@ const mockMessages = [
     author: 'Mike Johnson',
     content: 'Happy anniversary to mom and dad! 25 years of love and laughter. Thanks for showing us what true partnership looks like. ❤️',
     timestamp: new Date('2024-01-14T14:20:00'),
+    createdAt: new Date('2024-01-14T14:20:00'),
     likes: 18,
     replies: 7,
+    comments: 7,
     avatar: 'MJ',
     attachments: []
   },
@@ -44,8 +48,10 @@ const mockMessages = [
     author: 'Emma Johnson',
     content: 'Guess what everyone! I got accepted into the university program I applied for! Thank you all for your support and encouragement. Can\'t wait to start this new chapter! 🎓',
     timestamp: new Date('2024-01-13T10:15:00'),
+    createdAt: new Date('2024-01-13T10:15:00'),
     likes: 24,
     replies: 12,
+    comments: 12,
     avatar: 'EJ',
     attachments: []
   },
@@ -54,8 +60,10 @@ const mockMessages = [
     author: 'David Johnson',
     content: 'Family game night was so much fun! Thanks everyone for coming over. Emma destroyed us all at Monopoly again 😄 Same time next week?',
     timestamp: new Date('2024-01-12T21:45:00'),
+    createdAt: new Date('2024-01-12T21:45:00'),
     likes: 15,
     replies: 8,
+    comments: 8,
     avatar: 'DJ',
     attachments: ['game_night.jpg', 'monopoly_board.jpg']
   }
