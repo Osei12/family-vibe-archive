@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { InviteMemberDialog } from "@/components/InviteMemberDialog";
@@ -47,13 +46,20 @@ interface FamilyMember {
     documentsShared: number;
     messagesPosted: number;
   };
-  activities: Array<{
-    type: string;
-    description: string;
-    timestamp: Date;
-  }>;
+  activities: {
+    photos: number;
+    documents: number;
+    messages: number;
+  };
   storageUsed: number;
   status: "active" | "inactive" | "pending";
+  phone?: string;
+  bio?: string;
+  recentActivities?: Array<{
+    type: 'photo' | 'document' | 'message';
+    action: string;
+    date: Date;
+  }>;
 }
 
 const mockMembers: FamilyMember[] = [
@@ -79,9 +85,11 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 12,
       messagesPosted: 89,
     },
-    activities: [
-      { type: "upload", description: "Uploaded family photo", timestamp: new Date() }
-    ],
+    activities: {
+      photos: 245,
+      documents: 12,
+      messages: 89,
+    },
     storageUsed: 1.2,
     status: "active",
   },
@@ -107,9 +115,11 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 8,
       messagesPosted: 134,
     },
-    activities: [
-      { type: "message", description: "Posted a message", timestamp: new Date() }
-    ],
+    activities: {
+      photos: 156,
+      documents: 8,
+      messages: 134,
+    },
     storageUsed: 0.8,
     status: "active",
   },
@@ -135,9 +145,11 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 0,
       messagesPosted: 45,
     },
-    activities: [
-      { type: "photo", description: "Uploaded a photo", timestamp: new Date() }
-    ],
+    activities: {
+      photos: 89,
+      documents: 0,
+      messages: 45,
+    },
     storageUsed: 0.3,
     status: "active",
   },
@@ -180,7 +192,11 @@ const Admin = () => {
         documentsShared: 0,
         messagesPosted: 0,
       },
-      activities: [],
+      activities: {
+        photos: 0,
+        documents: 0,
+        messages: 0,
+      },
       storageUsed: 0,
       status: "pending",
     };
