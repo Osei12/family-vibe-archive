@@ -299,7 +299,7 @@ const Index = () => {
               onClick={() => setShowLiveDemo(true)}
               className="px-8 py-4 text-lg font-semibold border-2 border-gray-200 hover:bg-gray-50 hover:scale-105 transition-all duration-300 rounded-xl"
             >
-              View Live Demo
+              Try Live Demo
             </Button>
           </div>
 
