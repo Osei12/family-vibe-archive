@@ -116,34 +116,40 @@ const Index = () => {
   const familyMembers = [
     {
       name: "Mom",
-      avatar: "https://images.expectful.com/image/upload/ar_1,c_thumb,w_3840/f_auto/q_50/v1699909590/Contentful/Authors/L_Oreal_Thompson_Payton.webp",
-      position: "top-16 left-4 sm:top-20 sm:left-20"
+      avatar:
+        "https://images.expectful.com/image/upload/ar_1,c_thumb,w_3840/f_auto/q_50/v1699909590/Contentful/Authors/L_Oreal_Thompson_Payton.webp",
+      position: "top-16 left-4 sm:top-20 sm:left-20",
     },
     {
       name: "Dad",
-      avatar: "https://sofontsy.com/cdn/shop/products/dope-black-dad-svg-svg-bestteez-465534_1024x1024.jpg?v=1648822675",
-      position: "top-24 left-32 sm:top-32 sm:left-80"
+      avatar:
+        "https://sofontsy.com/cdn/shop/products/dope-black-dad-svg-svg-bestteez-465534_1024x1024.jpg?v=1648822675",
+      position: "top-24 left-32 sm:top-32 sm:left-80",
     },
     {
       name: "Emma",
-      avatar: "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
-      position: "top-12 right-6 sm:top-16 sm:right-24"
+      avatar:
+        "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
+      position: "top-12 right-6 sm:top-16 sm:right-24",
     },
     {
       name: "Jenny",
-      avatar: "https://www.shutterstock.com/image-photo/happy-attractive-african-business-leader-600nw-2451794349.jpg",
-      position: "top-32 right-4 sm:top-40 sm:right-16"
+      avatar:
+        "https://www.shutterstock.com/image-photo/happy-attractive-african-business-leader-600nw-2451794349.jpg",
+      position: "top-32 right-4 sm:top-40 sm:right-16",
     },
     {
       name: "Grandma",
-      avatar: "https://img.freepik.com/free-psd/happy-beautiful-black-woman-posing_23-2151879760.jpg?semt=ais_hybrid&w=740",
-      position: "bottom-24 left-4 sm:bottom-32 sm:left-16"
+      avatar:
+        "https://img.freepik.com/free-psd/happy-beautiful-black-woman-posing_23-2151879760.jpg?semt=ais_hybrid&w=740",
+      position: "bottom-24 left-4 sm:bottom-32 sm:left-16",
     },
     {
       name: "Grandpa",
-      avatar: "https://www.shutterstock.com/image-photo/real-cuban-people-feelings-portrait-260nw-537639046.jpg",
-      position: "bottom-16 right-8 sm:bottom-20 sm:right-32"
-    }
+      avatar:
+        "https://www.shutterstock.com/image-photo/real-cuban-people-feelings-portrait-260nw-537639046.jpg",
+      position: "bottom-16 right-8 sm:bottom-20 sm:right-32",
+    },
   ];
 
   return (
@@ -467,6 +473,80 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Security Section */}
+      <div className="bg-gray-50 dark:bg-gray-800/50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-xl w-fit mx-auto mb-6">
+              <Shield className="h-8 w-8 text-green-500 dark:text-green-400" />
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Private & Secure
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Your family's privacy is our priority. All data is encrypted and
+              only accessible to authorized family members.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="text-center">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                <span className="text-2xl">🔒</span>
+              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                End-to-End Encryption
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                Your data is protected with military-grade encryption
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                <Users className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Family Only Access
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                Control who can access your family's information
+              </p>
+            </div>
+
+            <div className="text-center sm:col-span-2 lg:col-span-1">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                <span className="text-2xl">☁️</span>
+              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Secure Cloud Storage
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                Automatic backups ensure your memories are never lost
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-gradient-to-r from-rose-500 to-pink-500 dark:from-rose-600 dark:to-pink-600 rounded-3xl p-8 lg:p-12 text-center text-white">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            Ready to Start Your Family Archive?
+          </h2>
+          <p className="text-lg lg:text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+            Join thousands of families who trust us to keep their memories safe
+            and accessible.
+          </p>
+          <Link to="/admin">
+            <Button className="bg-white text-rose-500 hover:bg-gray-100 dark:bg-gray-100 dark:text-rose-600 dark:hover:bg-gray-200 px-8 py-3 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              Get Started Today
+            </Button>
+          </Link>
+        </div>
+      </div> */}
+
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-rose-500 to-pink-500">
         <div className="max-w-4xl mx-auto text-center text-white animate-fade-in">
@@ -485,7 +565,7 @@ const Index = () => {
             </Link>
             <Link to="/messages">
               <Button
-                variant="outline"
+                variant="ghost"
                 className="border-white text-white hover:bg-white hover:text-rose-600 px-8 py-3 text-lg font-semibold hover:scale-105 transition-all duration-300"
               >
                 Share a Message
