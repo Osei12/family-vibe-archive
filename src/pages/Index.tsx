@@ -1,8 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
-import LiveDemo from "@/components/LiveDemo";
-import FAQ from "@/components/FAQ";
 import {
   Camera,
   FileText,
@@ -20,8 +17,6 @@ import {
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  const [showLiveDemo, setShowLiveDemo] = useState(false);
-
   const features = [
     {
       icon: Camera,
@@ -116,49 +111,55 @@ const Index = () => {
   const familyMembers = [
     {
       name: "Mom",
-      avatar: "https://images.expectful.com/image/upload/ar_1,c_thumb,w_3840/f_auto/q_50/v1699909590/Contentful/Authors/L_Oreal_Thompson_Payton.webp",
-      position: "top-16 left-4 sm:top-20 sm:left-20"
+      avatar:
+        "https://images.expectful.com/image/upload/ar_1,c_thumb,w_3840/f_auto/q_50/v1699909590/Contentful/Authors/L_Oreal_Thompson_Payton.webp",
+      position: "top-20 left-20",
     },
     {
       name: "Dad",
-      avatar: "https://sofontsy.com/cdn/shop/products/dope-black-dad-svg-svg-bestteez-465534_1024x1024.jpg?v=1648822675",
-      position: "top-24 left-32 sm:top-32 sm:left-80"
+      avatar:
+        "https://sofontsy.com/cdn/shop/products/dope-black-dad-svg-svg-bestteez-465534_1024x1024.jpg?v=1648822675",
+      position: "top-32 left-80",
     },
     {
       name: "Emma",
-      avatar: "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
-      position: "top-12 right-6 sm:top-16 sm:right-24"
+      avatar:
+        "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
+      position: "top-16 right-24",
     },
     {
       name: "Jenny",
-      avatar: "https://www.shutterstock.com/image-photo/happy-attractive-african-business-leader-600nw-2451794349.jpg",
-      position: "top-32 right-4 sm:top-40 sm:right-16"
+      avatar:
+        "https://www.shutterstock.com/image-photo/happy-attractive-african-business-leader-600nw-2451794349.jpg",
+      position: "top-40 right-16",
     },
     {
       name: "Grandma",
-      avatar: "https://img.freepik.com/free-psd/happy-beautiful-black-woman-posing_23-2151879760.jpg?semt=ais_hybrid&w=740",
-      position: "bottom-24 left-4 sm:bottom-32 sm:left-16"
+      avatar:
+        "https://img.freepik.com/free-psd/happy-beautiful-black-woman-posing_23-2151879760.jpg?semt=ais_hybrid&w=740",
+      position: "bottom-32 left-16",
     },
     {
       name: "Grandpa",
-      avatar: "https://www.shutterstock.com/image-photo/real-cuban-people-feelings-portrait-260nw-537639046.jpg",
-      position: "bottom-16 right-8 sm:bottom-20 sm:right-32"
-    }
+      avatar:
+        "https://www.shutterstock.com/image-photo/real-cuban-people-feelings-portrait-260nw-537639046.jpg",
+      position: "bottom-20 right-32",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
 
-      {/* Hero Section - with improved responsiveness */}
+      {/* Hero Section - Inspired by TrustLine design */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center">
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Floating family member avatars with improved responsive positioning */}
+          {/* Floating family member avatars */}
           {familyMembers.map((member, index) => (
             <div
               key={member.name}
-              className={`absolute ${member.position} w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 p-1 sm:p-2 bg-white dark:bg-pink-700/50 rounded-full shadow-lg flex items-center justify-center text-lg sm:text-2xl animate-bounce`}
+              className={`absolute ${member.position} w-24 h-24 p-2 bg-white dark:bg-pink-700/50 rounded-full shadow-lg flex items-center justify-center text-2xl animate-bounce`}
               style={{
                 animationDelay: `${index * 0.5}s`,
                 animationDuration: "3s",
@@ -167,10 +168,9 @@ const Index = () => {
               <img
                 src={member.avatar}
                 className="w-full h-full rounded-full bg-cover object-cover bg-center object-center"
-                alt={member.name}
               />
 
-              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-600 whitespace-nowrap hidden sm:block">
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-600 whitespace-nowrap">
                 {member.name}
               </div>
             </div>
@@ -216,21 +216,21 @@ const Index = () => {
             </svg>
           </div>
 
-          {/* Floating heart icons with responsive sizing */}
+          {/* Floating heart icons */}
           <div className="absolute top-1/4 left-1/4 text-rose-300 animate-pulse">
-            <Heart className="h-4 w-4 sm:h-6 sm:w-6" />
+            <Heart className="h-6 w-6" />
           </div>
           <div
             className="absolute top-1/3 right-1/3 text-pink-300 animate-pulse"
             style={{ animationDelay: "2s" }}
           >
-            <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
+            <Heart className="h-4 w-4" />
           </div>
           <div
             className="absolute bottom-1/4 right-1/4 text-rose-400 animate-pulse"
             style={{ animationDelay: "1s" }}
           >
-            <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Heart className="h-5 w-5" />
           </div>
         </div>
 
@@ -257,7 +257,7 @@ const Index = () => {
 
             <p className="text-xl sm:text-2xl text-gray-600 dark:text-neutral-400 max-w-4xl mx-auto leading-relaxed mb-8">
               Join thousands of families who trust us to keep their memories
-              safe and accessible. Go ahead, it's FREE to start.
+              safe and accessible. Go ahead, it’s FREE to start.
             </p>
 
             {/* Key benefits */}
@@ -290,7 +290,6 @@ const Index = () => {
             </Link>
             <Button
               variant="outline"
-              onClick={() => setShowLiveDemo(true)}
               className="px-8 py-4 text-lg font-semibold border-2 border-gray-200 hover:bg-gray-50 hover:scale-105 transition-all duration-300 rounded-xl"
             >
               View Live Demo
@@ -494,12 +493,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      {/* FAQ Section */}
-      <FAQ />
-
-      {/* Live Demo Modal */}
-      <LiveDemo isOpen={showLiveDemo} onClose={() => setShowLiveDemo(false)} />
     </div>
   );
 };

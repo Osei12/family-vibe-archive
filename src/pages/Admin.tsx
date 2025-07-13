@@ -12,13 +12,10 @@ import {
   FileText, 
   MessageCircle,
   Calendar,
-  UserPlus,
-  HardDrive
+  Eye
 } from 'lucide-react';
 import { InviteMemberDialog } from '@/components/InviteMemberDialog';
 import { MemberProfileDialog } from '@/components/MemberProfileDialog';
-import DetailedStorageMetrics from '@/components/DetailedStorageMetrics';
-import UserRoleManager from '@/components/UserRoleManager';
 
 // Mock data for family members
 const mockFamilyMembers = [
@@ -89,19 +86,6 @@ const Admin = () => {
     return role === 'Admin' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
   };
 
-  const handleRoleChange = (userId: string, newRole: string) => {
-    console.log(`Changing role for user ${userId} to ${newRole}`);
-    // TODO: Implement role change logic
-  };
-
-  // Mock detailed storage data
-  const detailedStorageData = {
-    used: 450,
-    total: 1024,
-    photos: 320,
-    documents: 130,
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/30 to-orange-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
@@ -110,27 +94,11 @@ const Admin = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Manage Family Archive</h1>
-            <p className="text-gray-600 dark:text-gray-300">Add family members and manage storage for your family archive</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Family Management</h1>
+            <p className="text-gray-600 dark:text-gray-300">Manage family members and monitor activities</p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-3">
-            <InviteMemberDialog />
-            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-              <HardDrive className="h-4 w-4 mr-2" />
-              Manage Storage
-            </Button>
-          </div>
-        </div>
-
-        {/* Storage Metrics */}
-        <div className="mb-8">
-          <DetailedStorageMetrics
-            usedStorage={detailedStorageData.used}
-            totalStorage={detailedStorageData.total}
-            photosStorage={detailedStorageData.photos}
-            documentsStorage={detailedStorageData.documents}
-          />
+          <InviteMemberDialog />
         </div>
 
         {/* Overview Stats */}
@@ -200,10 +168,7 @@ const Admin = () => {
         {/* Family Members List */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 flex items-center">
-              <Users className="h-5 w-5 mr-2" />
-              Family Members
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Family Members</h2>
           </div>
           
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -255,15 +220,7 @@ const Admin = () => {
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
-                      <UserRoleManager
-                        userId={member.id}
-                        currentRole={member.role}
-                        userName={member.name}
-                        onRoleChange={handleRoleChange}
-                      />
-                      <MemberProfileDialog member={member} />
-                    </div>
+                    <MemberProfileDialog member={member} />
                   </div>
                 </div>
               </div>

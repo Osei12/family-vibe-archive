@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import FileUploadWithProgress from "@/components/FileUploadWithProgress";
+import FileUpload from "@/components/FileUpload";
 import DocumentPreview from "@/components/DocumentPreview";
-import BulkActions from "@/components/BulkActions";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -60,9 +59,10 @@ const Documents = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [documents, setDocuments] = useState<Document[]>(mockDocuments);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [uploadCategory, setUploadCategory] = useState<"family" | "legal" | "medical" | "financial" | "other">("other");
+  const [uploadCategory, setUploadCategory] = useState<
+    "family" | "legal" | "medical" | "financial" | "other"
+  >("other");
   const [previewDocument, setPreviewDocument] = useState<Document | null>(null);
-  const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
 
   const categories = [
     { id: "all", label: "All Documents", count: documents.length },
@@ -114,35 +114,11 @@ const Documents = () => {
     setShowUpload(false);
   };
 
-  const handleCategoryUpload = (category: "family" | "legal" | "medical" | "financial" | "other") => {
+  const handleCategoryUpload = (
+    category: "family" | "legal" | "medical" | "financial" | "other"
+  ) => {
     setUploadCategory(category);
     setShowUpload(true);
-  };
-
-  const handleBulkDownload = (selectedIds: string[]) => {
-    selectedIds.forEach(docId => {
-      const doc = documents.find(d => d.id === docId);
-      if (doc) {
-        if (doc.url) {
-          const link = document.createElement("a");
-          link.href = doc.url;
-          link.download = doc.name;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } else if (doc.content) {
-          const blob = new Blob([doc.content], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = doc.name;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-        }
-      }
-    });
   };
 
   const formatFileSize = (bytes: number) => {
@@ -231,10 +207,40 @@ const Documents = () => {
           <div className="mb-8 bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
             <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
               <FileText className="h-5 w-5 mr-2 text-blue-500" />
-              Upload New Document to {uploadCategory.charAt(0).toUpperCase() + uploadCategory.slice(1)}
+              Upload New Document
             </h2>
 
-            <FileUploadWithProgress
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Category
+              </label>
+              <Select
+                value={uploadCategory}
+                onValueChange={(value) =>
+                  setUploadCategory(
+                    value as
+                      | "family"
+                      | "legal"
+                      | "medical"
+                      | "financial"
+                      | "other"
+                  )
+                }
+              >
+                <SelectTrigger className="w-full max-w-xs">
+                  <SelectValue placeholder="Choose category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="family">Family</SelectItem>
+                  <SelectItem value="legal">Legal</SelectItem>
+                  <SelectItem value="medical">Medical</SelectItem>
+                  <SelectItem value="financial">Financial</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <FileUpload
               onFileSelect={handleFileUpload}
               acceptedTypes=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
               multiple={true}
@@ -271,7 +277,12 @@ const Documents = () => {
                       <Button
                         onClick={() =>
                           handleCategoryUpload(
-                            category.id as "family" | "legal" | "medical" | "financial" | "other"
+                            category.id as
+                              | "family"
+                              | "legal"
+                              | "medical"
+                              | "financial"
+                              | "other"
                           )
                         }
                         size="sm"
@@ -290,19 +301,6 @@ const Documents = () => {
 
           {/* Documents List */}
           <div className="lg:col-span-3">
-            {/* Bulk Actions */}
-            {filteredDocuments.length > 0 && (
-              <BulkActions
-                items={filteredDocuments}
-                selectedItems={selectedDocuments}
-                onSelectionChange={setSelectedDocuments}
-                onBulkDownload={handleBulkDownload}
-                getItemId={(doc) => doc.id}
-                getItemName={(doc) => doc.name}
-                className="mb-6"
-              />
-            )}
-
             {filteredDocuments.length > 0 ? (
               <div className="space-y-4">
                 {filteredDocuments.map((doc) => (
