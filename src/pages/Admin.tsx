@@ -47,7 +47,6 @@ interface FamilyMember {
     documentsShared: number;
     messagesPosted: number;
   };
-  // Add missing properties to fix the build error
   activities: Array<{
     type: string;
     description: string;
@@ -181,6 +180,9 @@ const Admin = () => {
         documentsShared: 0,
         messagesPosted: 0,
       },
+      activities: [],
+      storageUsed: 0,
+      status: "pending",
     };
     setMembers([...members, newMember]);
     setShowInviteDialog(false);
