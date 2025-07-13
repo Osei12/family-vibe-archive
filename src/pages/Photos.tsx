@@ -1,383 +1,279 @@
-import { useState, useEffect } from "react";
-import Navigation from "@/components/Navigation";
-import PhotoGallery from "@/components/PhotoGallery";
-import PhotoMetadataDialog from "@/components/PhotoMetadataDialog";
-import StorageMetrics from "@/components/StorageMetrics";
-import FileUploadWithProgress from "@/components/FileUploadWithProgress";
-import BulkActions from "@/components/BulkActions";
-import PhotoFilters from "@/components/PhotoFilters";
-import ShareDialog from "@/components/ShareDialog";
-import { Button } from "@/components/ui/button";
-import { Plus, Upload, Download, Share2 } from "lucide-react";
 
-// Mock data - in a real app, this would come from a database
+import { useState } from 'react';
+import Navigation from '@/components/Navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Upload, 
+  Search, 
+  Calendar, 
+  User, 
+  Image, 
+  Download,
+  Heart,
+  MessageCircle,
+  Share2,
+  Filter,
+  Grid3X3,
+  List
+} from 'lucide-react';
+import PhotoGallery from '@/components/PhotoGallery';
+import PhotoFilters from '@/components/PhotoFilters';
+import FileUploadWithProgress from '@/components/FileUploadWithProgress';
+import BulkActions from '@/components/BulkActions';
+
+// Mock data for photos
 const mockPhotos = [
   {
-    id: "1",
-    url: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
-    title: "Family Cat Mittens",
-    description: "Our beloved family cat enjoying a sunny afternoon",
-    uploadedBy: "Sarah",
-    uploadedAt: new Date("2024-01-15"),
+    id: '1',
+    url: '/placeholder.svg',
+    title: 'Family Vacation 2024',
+    description: 'Amazing sunset at the beach during our summer vacation',
+    uploadedBy: 'Sarah Johnson',
+    uploadedAt: new Date('2024-01-15'),
+    likes: 12,
+    comments: 3,
+    tags: ['vacation', 'sunset', 'beach'],
+    size: '2.5 MB'
   },
   {
-    id: "2",
-    url: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=400&fit=crop",
-    title: "Nature Walk",
-    description: "Beautiful deer we spotted during our family hike",
-    uploadedBy: "Dad",
-    uploadedAt: new Date("2024-01-10"),
+    id: '2',
+    url: '/placeholder.svg',
+    title: 'Birthday Celebration',
+    description: 'Emma\'s 18th birthday party with the whole family',
+    uploadedBy: 'Mike Johnson',
+    uploadedAt: new Date('2024-01-10'),
+    likes: 25,
+    comments: 8,
+    tags: ['birthday', 'family', 'celebration'],
+    size: '3.2 MB'
   },
   {
-    id: "3",
-    url: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-    title: "Living Room Memories",
-    description: "Where we gather for movie nights",
-    uploadedBy: "Mom",
-    uploadedAt: new Date("2024-01-05"),
+    id: '3',
+    url: '/placeholder.svg',
+    title: 'Christmas Morning',
+    description: 'Opening presents on Christmas morning',
+    uploadedBy: 'Emma Johnson',
+    uploadedAt: new Date('2023-12-25'),
+    likes: 18,
+    comments: 6,
+    tags: ['christmas', 'presents', 'family'],
+    size: '4.1 MB'
   },
+  {
+    id: '4',
+    url: '/placeholder.svg',
+    title: 'Graduation Day',
+    description: 'So proud of our graduate!',
+    uploadedBy: 'David Johnson',
+    uploadedAt: new Date('2023-06-15'),
+    likes: 32,
+    comments: 12,
+    tags: ['graduation', 'achievement', 'proud'],
+    size: '2.8 MB'
+  }
 ];
 
 const Photos = () => {
-  const [showUpload, setShowUpload] = useState(false);
-  const [photos, setPhotos] = useState(mockPhotos);
-  const [filteredPhotos, setFilteredPhotos] = useState(mockPhotos);
-  const [showMetadataDialog, setShowMetadataDialog] = useState(false);
-  const [pendingFiles, setPendingFiles] = useState<Array<{file: File; preview: string}>>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    uploader: '',
+    dateRange: { start: '', end: '' },
+    tags: [] as string[],
+    sortBy: 'newest'
+  });
 
-  const photosPerPage = 12;
+  const filteredPhotos = mockPhotos.filter(photo => {
+    const matchesSearch = photo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         photo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         photo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesUploader = !filters.uploader || photo.uploadedBy.toLowerCase().includes(filters.uploader.toLowerCase());
+    
+    return matchesSearch && matchesUploader;
+  });
 
-  // Mock storage data - would come from backend
-  const storageData = {
-    used: 450, // MB
-    total: 1024, // MB (1GB for free plan)
-  };
-
-  const handleMetadataSave = (metadata: {
-    title: string;
-    description: string;
-  }) => {
-    if (pendingFiles) {
-      pendingFiles.forEach(pendingFile => {
-        const newPhoto = {
-          id: Date.now().toString(),
-          url: pendingFile.preview,
-          title: metadata.title,
-          description: metadata.description,
-          uploadedBy: "You",
-          uploadedAt: new Date(),
-        };
-        setPhotos((prev) => [newPhoto, ...prev]);
-      });
-      setPendingFiles([]);
-      setShowMetadataDialog(false);
-    }
-  };
-
-  const handleMetadataCancel = () => {
-    setPendingFiles([]);
-    setShowMetadataDialog(false);
-  };
-
-  const handlePhotoRemove = (id: string) => {
-    setPhotos((prev) => prev.filter((photo) => photo.id !== id));
-  };
-
-  const handleFileUpload = (files: File[]) => {
-    const newPendingFiles = files.map(file => {
-      const reader = new FileReader();
-      return new Promise<{file: File; preview: string}>((resolve) => {
-        reader.onload = (e) => {
-          resolve({
-            file,
-            preview: e.target?.result as string,
-          });
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    Promise.all(newPendingFiles).then(results => {
-      setPendingFiles(results);
-      if (results.length > 0) {
-        setShowMetadataDialog(true);
-      }
-    });
-    setShowUpload(false);
-  };
-
-  const handleBulkDownload = (selectedIds: string[]) => {
-    selectedIds.forEach(photoId => {
-      const photo = photos.find(p => p.id === photoId);
-      if (photo) {
-        const link = document.createElement('a');
-        link.href = photo.url;
-        link.download = `${photo.title}.jpg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    });
-  };
-
-  const handleFilterChange = (filters: any) => {
-    let filtered = [...photos];
-
-    // Apply search filter
-    if (filters.search) {
-      filtered = filtered.filter(photo => 
-        photo.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-        photo.description?.toLowerCase().includes(filters.search.toLowerCase())
-      );
-    }
-
-    // Apply uploader filter
-    if (filters.uploadedBy) {
-      filtered = filtered.filter(photo => photo.uploadedBy === filters.uploadedBy);
-    }
-
-    // Apply date filter
-    if (filters.dateRange) {
-      const now = new Date();
-      const filterDate = new Date();
-      
-      switch (filters.dateRange) {
-        case 'today':
-          filterDate.setHours(0, 0, 0, 0);
-          break;
-        case 'week':
-          filterDate.setDate(now.getDate() - 7);
-          break;
-        case 'month':
-          filterDate.setMonth(now.getMonth() - 1);
-          break;
-        case 'year':
-          filterDate.setFullYear(now.getFullYear() - 1);
-          break;
-      }
-      
-      if (filters.dateRange !== '') {
-        filtered = filtered.filter(photo => photo.uploadedAt >= filterDate);
-      }
-    }
-
-    // Apply sorting
-    switch (filters.sortBy) {
-      case 'newest':
-        filtered.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
-        break;
-      case 'oldest':
-        filtered.sort((a, b) => a.uploadedAt.getTime() - b.uploadedAt.getTime());
-        break;
-      case 'name':
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-    }
-
-    setFilteredPhotos(filtered);
-    setCurrentPage(1);
-  };
-
-  const loadMorePhotos = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setCurrentPage(prev => prev + 1);
-      setLoading(false);
-    }, 1000); // Simulate loading
-  };
-
-  const displayedPhotos = filteredPhotos.slice(0, currentPage * photosPerPage);
-  const hasMore = displayedPhotos.length < filteredPhotos.length;
-
-  const handlePhotoShare = (photo: any) => {
-    return (
-      <ShareDialog
-        title={photo.title}
-        content={`Check out this photo: ${photo.description || ''}`}
-        url={photo.url}
-      >
-        <Button variant="outline" size="sm">
-          <Share2 className="h-4 w-4 mr-2" />
-          Share
-        </Button>
-      </ShareDialog>
+  const handlePhotoSelect = (photoId: string) => {
+    setSelectedPhotos(prev => 
+      prev.includes(photoId) 
+        ? prev.filter(id => id !== photoId)
+        : [...prev, photoId]
     );
   };
 
-  const handlePhotoDownload = (photo: any) => {
-    const link = document.createElement('a');
-    link.href = photo.url;
-    link.download = `${photo.title}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleSelectAll = () => {
+    setSelectedPhotos(
+      selectedPhotos.length === filteredPhotos.length 
+        ? [] 
+        : filteredPhotos.map(photo => photo.id)
+    );
+  };
+
+  const handleBulkDownload = () => {
+    console.log('Downloading photos:', selectedPhotos);
+    // TODO: Implement bulk download
+  };
+
+  const handleBulkDelete = () => {
+    console.log('Deleting photos:', selectedPhotos);
+    // TODO: Implement bulk delete
+    setSelectedPhotos([]);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50/30 to-orange-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
-
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-neutral-200 mb-2">
-              Family Photos
-            </h1>
-            <p className="text-gray-600 dark:text-neutral-400">
-              Share and cherish your precious moments together
-            </p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Family Photos</h1>
+            <p className="text-gray-600 dark:text-gray-300">Cherish and share your precious family memories</p>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-            <StorageMetrics
-              usedStorage={storageData.used}
-              totalStorage={storageData.total}
-              className="flex-1 lg:w-80"
-            />
-            <Button
-              onClick={() => setShowUpload(!showUpload)}
-              className="bg-rose-500 hover:bg-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Add Photos
-            </Button>
-          </div>
+          
+          <FileUploadWithProgress
+            onUpload={(files) => console.log('Uploading photos:', files)}
+            acceptedFileTypes="image/*"
+            multiple
+          />
         </div>
 
-        {/* Upload Section */}
-        {showUpload && (
-          <div className="mb-8 bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-              <Upload className="h-5 w-5 mr-2 text-rose-500" />
-              Upload New Photos
-            </h2>
-            <FileUploadWithProgress
-              onFileSelect={handleFileUpload}
-              acceptedTypes="image/*"
-              multiple={true}
-              maxSize={5}
-            />
+        {/* Search and Filters */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+          <div className="flex flex-col lg:flex-row gap-4 mb-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search photos by title, description, or tags..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center"
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+              
+              <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className="rounded-r-none"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className="rounded-l-none"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
-        )}
 
-        {/* Photo Filters */}
-        <PhotoFilters onFilterChange={handleFilterChange} />
+          {showFilters && (
+            <PhotoFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              availableUploaders={Array.from(new Set(mockPhotos.map(p => p.uploadedBy)))}
+              availableTags={Array.from(new Set(mockPhotos.flatMap(p => p.tags)))}
+            />
+          )}
+        </div>
 
         {/* Bulk Actions */}
-        {filteredPhotos.length > 0 && (
+        {selectedPhotos.length > 0 && (
           <BulkActions
-            items={filteredPhotos}
-            selectedItems={selectedPhotos}
-            onSelectionChange={setSelectedPhotos}
-            onBulkDownload={handleBulkDownload}
-            getItemId={(photo) => photo.id}
-            getItemName={(photo) => photo.title}
-            className="mb-6"
+            selectedCount={selectedPhotos.length}
+            totalCount={filteredPhotos.length}
+            onSelectAll={handleSelectAll}
+            onDownload={handleBulkDownload}
+            onDelete={handleBulkDelete}
+            onClearSelection={() => setSelectedPhotos([])}
           />
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="text-3xl font-bold text-rose-500 mb-2">
-              {photos.length}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center">
+              <Image className="h-8 w-8 text-blue-500 mr-3" />
+              <div>
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{filteredPhotos.length}</div>
+                <div className="text-gray-600 dark:text-gray-400 text-sm">Total Photos</div>
+              </div>
             </div>
-            <div className="text-gray-600">Total Photos</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="text-3xl font-bold text-blue-500 mb-2">
-              {new Set(photos.map((p) => p.uploadedBy)).size}
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center">
+              <Heart className="h-8 w-8 text-red-500 mr-3" />
+              <div>
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                  {filteredPhotos.reduce((sum, photo) => sum + photo.likes, 0)}
+                </div>
+                <div className="text-gray-600 dark:text-gray-400 text-sm">Total Likes</div>
+              </div>
             </div>
-            <div className="text-gray-600">Contributors</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="text-3xl font-bold text-green-500 mb-2">
-              {Math.round((photos.length / 30) * 100)}%
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center">
+              <MessageCircle className="h-8 w-8 text-green-500 mr-3" />
+              <div>
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                  {filteredPhotos.reduce((sum, photo) => sum + photo.comments, 0)}
+                </div>
+                <div className="text-gray-600 dark:text-gray-400 text-sm">Comments</div>
+              </div>
             </div>
-            <div className="text-gray-600">This Month</div>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center">
+              <User className="h-8 w-8 text-purple-500 mr-3" />
+              <div>
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                  {new Set(filteredPhotos.map(p => p.uploadedBy)).size}
+                </div>
+                <div className="text-gray-600 dark:text-gray-400 text-sm">Contributors</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Photo Gallery with Infinite Scroll */}
-        {displayedPhotos.length > 0 ? (
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-              {displayedPhotos.map((photo) => (
-                <div key={photo.id} className="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
-                  <img
-                    src={photo.url}
-                    alt={photo.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <h3 className="text-white text-sm font-medium truncate mb-2">
-                      {photo.title}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <p className="text-white/80 text-xs">by {photo.uploadedBy}</p>
-                      <div className="flex space-x-1">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handlePhotoDownload(photo)}
-                          className="text-white hover:bg-white/20 h-8 w-8 p-0"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        {handlePhotoShare(photo)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Photo Gallery */}
+        <PhotoGallery 
+          photos={filteredPhotos}
+          viewMode={viewMode}
+          selectedPhotos={selectedPhotos}
+          onPhotoSelect={handlePhotoSelect}
+        />
 
-            {/* Load More Button */}
-            {hasMore && (
-              <div className="text-center">
-                <Button
-                  onClick={loadMorePhotos}
-                  disabled={loading}
-                  className="bg-rose-500 hover:bg-rose-600 text-white"
-                >
-                  {loading ? "Loading..." : "Load More Photos"}
-                </Button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Upload className="h-12 w-12 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              No photos yet
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Start building your family photo collection
-            </p>
-            <Button
-              onClick={() => setShowUpload(true)}
-              className="bg-rose-500 hover:bg-rose-600 text-white"
-            >
-              Upload Your First Photo
-            </Button>
+        {filteredPhotos.length === 0 && (
+          <div className="text-center py-12">
+            <Image className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">No photos found</h3>
+            <p className="text-gray-500 dark:text-gray-400">Try adjusting your search terms or upload some new memories.</p>
           </div>
         )}
       </div>
-
-      {/* Photo Metadata Dialog - Updated for multiple files */}
-      <PhotoMetadataDialog
-        isOpen={showMetadataDialog}
-        onClose={handleMetadataCancel}
-        onSave={handleMetadataSave}
-        imagePreview={pendingFiles[0]?.preview}
-      />
     </div>
   );
 };
