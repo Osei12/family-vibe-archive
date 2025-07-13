@@ -81,9 +81,9 @@ const Photos = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
-    uploader: '',
-    dateRange: { start: '', end: '' },
-    tags: [] as string[],
+    search: '',
+    uploadedBy: '',
+    dateRange: '',
     sortBy: 'newest'
   });
 
@@ -92,7 +92,7 @@ const Photos = () => {
                          photo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          photo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const matchesUploader = !filters.uploader || photo.uploadedBy.toLowerCase().includes(filters.uploader.toLowerCase());
+    const matchesUploader = !filters.uploadedBy || photo.uploadedBy.toLowerCase().includes(filters.uploadedBy.toLowerCase());
     
     return matchesSearch && matchesUploader;
   });
@@ -122,6 +122,10 @@ const Photos = () => {
     console.log('Deleting photos:', selectedPhotos);
     // TODO: Implement bulk delete
     setSelectedPhotos([]);
+  };
+
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
   };
 
   return (
@@ -189,7 +193,7 @@ const Photos = () => {
 
           {showFilters && (
             <PhotoFilters
-              onFilterChange={setFilters}
+              onFilterChange={handleFilterChange}
             />
           )}
         </div>
@@ -197,11 +201,13 @@ const Photos = () => {
         {/* Bulk Actions */}
         {selectedPhotos.length > 0 && (
           <BulkActions
-            items={selectedPhotos}
-            onSelectAll={handleSelectAll}
-            onAction={handleBulkDownload}
-            onDelete={handleBulkDelete}
-            onClear={() => setSelectedPhotos([])}
+            items={filteredPhotos}
+            selectedItems={selectedPhotos}
+            onSelectionChange={setSelectedPhotos}
+            onBulkDownload={handleBulkDownload}
+            getItemId={(photo) => photo.id}
+            getItemName={(photo) => photo.title}
+            className="mb-6"
           />
         )}
 
@@ -257,8 +263,7 @@ const Photos = () => {
         {/* Photo Gallery */}
         <PhotoGallery 
           photos={filteredPhotos}
-          selectedPhotos={selectedPhotos}
-          onPhotoSelect={handlePhotoSelect}
+          onRemove={(id) => console.log('Remove photo:', id)}
         />
 
         {filteredPhotos.length === 0 && (
