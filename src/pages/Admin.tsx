@@ -1,8 +1,8 @@
 
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import { InviteMemberDialog } from "@/components/InviteMemberDialog";
-import { MemberProfileDialog } from "@/components/MemberProfileDialog";
+import InviteMemberDialog from "@/components/InviteMemberDialog";
+import MemberProfileDialog from "@/components/MemberProfileDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,13 +47,6 @@ interface FamilyMember {
     documentsShared: number;
     messagesPosted: number;
   };
-  activities: Array<{
-    type: string;
-    description: string;
-    timestamp: Date;
-  }>;
-  storageUsed: number;
-  status: "active" | "inactive" | "pending";
 }
 
 const mockMembers: FamilyMember[] = [
@@ -79,11 +72,6 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 12,
       messagesPosted: 89,
     },
-    activities: [
-      { type: "upload", description: "Uploaded family photo", timestamp: new Date() }
-    ],
-    storageUsed: 1.2,
-    status: "active",
   },
   {
     id: "2",
@@ -107,11 +95,6 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 8,
       messagesPosted: 134,
     },
-    activities: [
-      { type: "message", description: "Posted a message", timestamp: new Date() }
-    ],
-    storageUsed: 0.8,
-    status: "active",
   },
   {
     id: "3",
@@ -135,11 +118,6 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 0,
       messagesPosted: 45,
     },
-    activities: [
-      { type: "photo", description: "Uploaded a photo", timestamp: new Date() }
-    ],
-    storageUsed: 0.3,
-    status: "active",
   },
 ];
 
@@ -180,9 +158,6 @@ const Admin = () => {
         documentsShared: 0,
         messagesPosted: 0,
       },
-      activities: [],
-      storageUsed: 0,
-      status: "pending",
     };
     setMembers([...members, newMember]);
     setShowInviteDialog(false);
@@ -241,14 +216,13 @@ const Admin = () => {
             </p>
           </div>
 
-          <InviteMemberDialog
-            trigger={
-              <Button className="bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                <UserPlus className="h-5 w-5 mr-2" />
-                Invite Member
-              </Button>
-            }
-          />
+          <Button
+            onClick={() => setShowInviteDialog(true)}
+            className="bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <UserPlus className="h-5 w-5 mr-2" />
+            Invite Member
+          </Button>
         </div>
 
         {/* Search and Filter */}
@@ -451,11 +425,19 @@ const Admin = () => {
           </div>
         )}
 
+        {/* Invite Member Dialog */}
+        <InviteMemberDialog
+          isOpen={showInviteDialog}
+          onClose={() => setShowInviteDialog(false)}
+          onInvite={handleInviteMember}
+        />
+
         {/* Member Profile Dialog */}
         {selectedMember && (
           <MemberProfileDialog
             member={selectedMember}
-            trigger={null}
+            isOpen={!!selectedMember}
+            onClose={() => setSelectedMember(null)}
           />
         )}
       </div>
