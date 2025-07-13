@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,8 @@ import {
   Calendar,
   User,
   HardDrive,
-  File
+  File,
+  MoreVertical
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -275,17 +277,16 @@ const Documents = () => {
         <div className="flex justify-end mb-4">
           <Button
             variant="outline"
-            className="mr-2"
+            className={`mr-2 ${viewMode === "grid" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200" : ""}`}
             onClick={() => setViewMode("grid")}
-            active={viewMode === "grid"}
           >
             <Grid className="h-4 w-4 mr-2" />
             Grid
           </Button>
           <Button
             variant="outline"
+            className={viewMode === "list" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200" : ""}
             onClick={() => setViewMode("list")}
-            active={viewMode === "list"}
           >
             <List className="h-4 w-4 mr-2" />
             List
