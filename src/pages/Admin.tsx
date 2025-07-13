@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import InviteMemberDialog from "@/components/InviteMemberDialog";
-import MemberProfileDialog from "@/components/MemberProfileDialog";
+import { InviteMemberDialog } from "@/components/InviteMemberDialog";
+import { MemberProfileDialog } from "@/components/MemberProfileDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -216,13 +215,14 @@ const Admin = () => {
             </p>
           </div>
 
-          <Button
-            onClick={() => setShowInviteDialog(true)}
-            className="bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            <UserPlus className="h-5 w-5 mr-2" />
-            Invite Member
-          </Button>
+          <InviteMemberDialog
+            trigger={
+              <Button className="bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                <UserPlus className="h-5 w-5 mr-2" />
+                Invite Member
+              </Button>
+            }
+          />
         </div>
 
         {/* Search and Filter */}
@@ -425,19 +425,11 @@ const Admin = () => {
           </div>
         )}
 
-        {/* Invite Member Dialog */}
-        <InviteMemberDialog
-          isOpen={showInviteDialog}
-          onClose={() => setShowInviteDialog(false)}
-          onInvite={handleInviteMember}
-        />
-
         {/* Member Profile Dialog */}
         {selectedMember && (
           <MemberProfileDialog
             member={selectedMember}
-            isOpen={!!selectedMember}
-            onClose={() => setSelectedMember(null)}
+            trigger={null}
           />
         )}
       </div>

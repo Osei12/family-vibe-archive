@@ -1,97 +1,165 @@
-
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import DocumentPreview from "@/components/DocumentPreview";
-import StorageMetrics from "@/components/StorageMetrics";
-import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { 
-  Plus, 
+  Upload, 
   Search, 
   FileText, 
-  Download, 
-  Eye, 
+  Image, 
+  Video, 
+  Music,
+  Download,
+  Eye,
   Trash2,
+  Share2,
   Filter,
+  Grid,
+  List,
   Calendar,
   User,
-  FolderOpen
+  HardDrive,
+  File
 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-interface Document {
+// Rename the interface to avoid conflict with DOM Document
+interface FamilyDocument {
   id: string;
   name: string;
-  type: string;
-  size: string;
+  type: "pdf" | "doc" | "image" | "video" | "audio" | "other";
+  size: number;
   uploadedBy: string;
   uploadedAt: Date;
-  category: "financial" | "medical" | "legal" | "personal" | "other";
-  url?: string;
+  category: "Important" | "Medical" | "Education" | "Financial" | "Personal" | "Other";
+  tags: string[];
+  isShared: boolean;
+  thumbnail?: string;
 }
 
-const mockDocuments: Document[] = [
+const mockDocuments: FamilyDocument[] = [
   {
     id: "1",
-    name: "Family Budget 2024.xlsx",
-    type: "Excel Spreadsheet",
-    size: "2.3 MB",
-    uploadedBy: "Dad",
-    uploadedAt: new Date("2024-01-20"),
-    category: "financial",
+    name: "Family Photo Album 2022",
+    type: "image",
+    size: 3.2,
+    uploadedBy: "John Smith",
+    uploadedAt: new Date("2023-02-15"),
+    category: "Personal",
+    tags: ["family", "photos", "2022"],
+    isShared: true,
+    thumbnail: "/images/photo-album-thumbnail.jpg",
   },
   {
     id: "2",
-    name: "Medical Records - Sarah.pdf",
-    type: "PDF Document",
-    size: "1.8 MB",
-    uploadedBy: "Mom",
-    uploadedAt: new Date("2024-01-18"),
-    category: "medical",
+    name: "Medical Records - John Smith",
+    type: "pdf",
+    size: 1.8,
+    uploadedBy: "Sarah Smith",
+    uploadedAt: new Date("2023-03-20"),
+    category: "Medical",
+    tags: ["medical", "records", "john"],
+    isShared: true,
   },
   {
     id: "3",
-    name: "House Insurance Policy.pdf",
-    type: "PDF Document",
-    size: "3.2 MB",
-    uploadedBy: "Dad",
-    uploadedAt: new Date("2024-01-15"),
-    category: "legal",
+    name: "Tax Returns 2021",
+    type: "pdf",
+    size: 2.5,
+    uploadedBy: "John Smith",
+    uploadedAt: new Date("2023-04-01"),
+    category: "Financial",
+    tags: ["tax", "returns", "2021"],
+    isShared: false,
   },
   {
     id: "4",
-    name: "Vacation Photos Backup.zip",
-    type: "Archive",
-    size: "15.7 MB",
-    uploadedBy: "Sarah",
-    uploadedAt: new Date("2024-01-12"),
-    category: "personal",
+    name: "School Report - Mike Smith",
+    type: "doc",
+    size: 1.2,
+    uploadedBy: "Sarah Smith",
+    uploadedAt: new Date("2023-05-10"),
+    category: "Education",
+    tags: ["school", "report", "mike"],
+    isShared: true,
+  },
+  {
+    id: "5",
+    name: "Important Documents",
+    type: "pdf",
+    size: 0.9,
+    uploadedBy: "John Smith",
+    uploadedAt: new Date("2023-06-05"),
+    category: "Important",
+    tags: ["important", "documents"],
+    isShared: true,
+  },
+  {
+    id: "6",
+    name: "Vacation Video - Summer 2022",
+    type: "video",
+    size: 15.6,
+    uploadedBy: "Sarah Smith",
+    uploadedAt: new Date("2023-07-12"),
+    category: "Personal",
+    tags: ["vacation", "video", "summer"],
+    isShared: true,
+    thumbnail: "/images/vacation-video-thumbnail.jpg",
+  },
+  {
+    id: "7",
+    name: "Audio Recording - Family Interview",
+    type: "audio",
+    size: 7.3,
+    uploadedBy: "John Smith",
+    uploadedAt: new Date("2023-08-18"),
+    category: "Personal",
+    tags: ["audio", "recording", "interview"],
+    isShared: false,
+  },
+  {
+    id: "8",
+    name: "House Deed",
+    type: "pdf",
+    size: 1.1,
+    uploadedBy: "Sarah Smith",
+    uploadedAt: new Date("2023-09-22"),
+    category: "Important",
+    tags: ["house", "deed"],
+    isShared: true,
+  },
+  {
+    id: "9",
+    name: "Car Insurance Policy",
+    type: "pdf",
+    size: 0.8,
+    uploadedBy: "John Smith",
+    uploadedAt: new Date("2023-10-28"),
+    category: "Financial",
+    tags: ["car", "insurance", "policy"],
+    isShared: false,
+  },
+  {
+    id: "10",
+    name: "Passport Copies",
+    type: "image",
+    size: 2.9,
+    uploadedBy: "Sarah Smith",
+    uploadedAt: new Date("2023-11-03"),
+    category: "Important",
+    tags: ["passport", "copies"],
+    isShared: true,
+    thumbnail: "/images/passport-thumbnail.jpg",
   },
 ];
 
 const Documents = () => {
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
-  const [showUpload, setShowUpload] = useState(false);
+  const [documents, setDocuments] = useState<FamilyDocument[]>(mockDocuments);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-
-  // Mock storage data
-  const storageData = {
-    used: 850,
-    total: 2048,
-  };
-
-  const categories = [
-    { id: "all", name: "All Documents", color: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" },
-    { id: "financial", name: "Financial", color: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200" },
-    { id: "medical", name: "Medical", color: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200" },
-    { id: "legal", name: "Legal", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200" },
-    { id: "personal", name: "Personal", color: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200" },
-    { id: "other", name: "Other", color: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200" },
-  ];
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const filteredDocuments = documents.filter((doc) => {
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -99,33 +167,59 @@ const Documents = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleFileUpload = (files: File[]) => {
-    files.forEach((file) => {
-      const newDocument: Document = {
-        id: Date.now().toString() + Math.random(),
-        name: file.name,
-        type: file.type || "Unknown",
-        size: (file.size / (1024 * 1024)).toFixed(1) + " MB",
-        uploadedBy: "You",
-        uploadedAt: new Date(),
-        category: "other",
-      };
-      setDocuments((prev) => [newDocument, ...prev]);
-    });
-    setShowUpload(false);
-  };
-
-  const handleDelete = (id: string) => {
-    setDocuments((prev) => prev.filter((doc) => doc.id !== id));
-  };
+  const categories = [
+    { id: "all", name: "All Categories" },
+    { id: "Important", name: "Important" },
+    { id: "Medical", name: "Medical" },
+    { id: "Education", name: "Education" },
+    { id: "Financial", name: "Financial" },
+    { id: "Personal", name: "Personal" },
+    { id: "Other", name: "Other" },
+  ];
 
   const getCategoryColor = (category: string) => {
-    const cat = categories.find(c => c.id === category);
-    return cat?.color || "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200";
+    switch (category) {
+      case "Important":
+        return "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200";
+      case "Medical":
+        return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200";
+      case "Education":
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200";
+      case "Financial":
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200";
+      case "Personal":
+        return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200";
+      default:
+        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200";
+    }
+  };
+
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case "pdf":
+        return <FileText className="h-4 w-4 mr-1" />;
+      case "doc":
+        return <FileText className="h-4 w-4 mr-1" />;
+      case "image":
+        return <Image className="h-4 w-4 mr-1" />;
+      case "video":
+        return <Video className="h-4 w-4 mr-1" />;
+      case "audio":
+        return <Music className="h-4 w-4 mr-1" />;
+      default:
+        return <File className="h-4 w-4 mr-1" />;
+    }
+  };
+
+  const getFileSize = (size: number) => {
+    if (size >= 1) {
+      return `${size.toFixed(1)} MB`;
+    }
+    return `${(size * 1024).toFixed(1)} KB`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/30 to-teal-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -136,41 +230,15 @@ const Documents = () => {
               Family Documents
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Securely store and share important family documents
+              Store and share your important family documents securely
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-            <StorageMetrics
-              usedStorage={storageData.used}
-              totalStorage={storageData.total}
-              className="flex-1 lg:w-80"
-            />
-            <Button
-              onClick={() => setShowUpload(!showUpload)}
-              className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Upload Document
-            </Button>
-          </div>
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+            <Upload className="h-5 w-5 mr-2" />
+            Upload Document
+          </Button>
         </div>
-
-        {/* Upload Section */}
-        {showUpload && (
-          <div className="mb-8 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 animate-fade-in">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-              <FileText className="h-5 w-5 mr-2 text-blue-500" />
-              Upload New Documents
-            </h2>
-            <FileUpload
-              onFileSelect={handleFileUpload}
-              acceptedTypes=".pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.txt,.jpg,.jpeg,.png"
-              multiple={true}
-              maxSize={50}
-            />
-          </div>
-        )}
 
         {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -191,9 +259,9 @@ const Documents = () => {
                 key={category.id}
                 variant={selectedCategory === category.id ? "default" : "secondary"}
                 className={`cursor-pointer transition-all duration-200 hover:scale-105 ${
-                  selectedCategory === category.id 
-                    ? "bg-blue-500 hover:bg-blue-600 text-white" 
-                    : `${category.color} hover:opacity-80`
+                  selectedCategory === category.id
+                    ? "bg-blue-500 hover:bg-blue-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:opacity-80"
                 }`}
                 onClick={() => setSelectedCategory(category.id)}
               >
@@ -203,159 +271,202 @@ const Documents = () => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold text-blue-500">
-                {filteredDocuments.length}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
-                {selectedCategory === "all" ? "Total Documents" : "Filtered Documents"}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold text-green-500">
-                {categories.length - 1}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">Categories</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold text-purple-500">
-                {new Set(documents.map(d => d.uploadedBy)).size}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">Contributors</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold text-orange-500">
-                {documents.reduce((acc, doc) => acc + parseFloat(doc.size), 0).toFixed(1)}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">MB Total Size</p>
-            </CardContent>
-          </Card>
+        {/* View Mode Toggle */}
+        <div className="flex justify-end mb-4">
+          <Button
+            variant="outline"
+            className="mr-2"
+            onClick={() => setViewMode("grid")}
+            active={viewMode === "grid"}
+          >
+            <Grid className="h-4 w-4 mr-2" />
+            Grid
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setViewMode("list")}
+            active={viewMode === "list"}
+          >
+            <List className="h-4 w-4 mr-2" />
+            List
+          </Button>
         </div>
 
-        {/* Documents Grid */}
-        {filteredDocuments.length > 0 ? (
+        {/* Documents List */}
+        {viewMode === "grid" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDocuments.map((document) => (
-              <Card 
-                key={document.id} 
+            {filteredDocuments.map((doc) => (
+              <Card
+                key={doc.id}
                 className="group hover:shadow-lg transition-all duration-300 bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:-translate-y-1"
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
-                    <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                      <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        {doc.type === "image" && doc.thumbnail ? (
+                          <img
+                            src={doc.thumbnail}
+                            alt={doc.name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                            {getFileIcon(doc.type)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                          {doc.name}
+                        </CardTitle>
+                        <CardDescription className="text-gray-600 dark:text-gray-300 flex items-center">
+                          {getFileIcon(doc.type)}
+                          {doc.type.toUpperCase()}
+                        </CardDescription>
+                      </div>
                     </div>
-                    <Badge className={getCategoryColor(document.category)}>
-                      {categories.find(c => c.id === document.category)?.name}
-                    </Badge>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-700">
+                        <DropdownMenuItem className="dark:hover:bg-gray-700 dark:text-white">
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Document
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="dark:hover:bg-gray-700 dark:text-white">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="dark:hover:bg-gray-700 dark:text-white">
+                          <Share2 className="h-4 w-4 mr-2" />
+                          Share
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600 dark:text-red-400 dark:hover:bg-red-900/20">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  
-                  <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
-                    {document.name}
-                  </CardTitle>
-                  
-                  <CardDescription className="text-gray-600 dark:text-gray-300">
-                    {document.type} • {document.size}
-                  </CardDescription>
+
+                  <div className="flex items-center justify-between mt-4">
+                    <Badge className={getCategoryColor(doc.category)}>
+                      <span className="capitalize">{doc.category}</span>
+                    </Badge>
+                    
+                    <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                      <HardDrive className="h-3 w-3 mr-1" />
+                      {getFileSize(doc.size)}
+                    </div>
+                  </div>
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-1" />
-                      {document.uploadedBy}
-                    </div>
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      {document.uploadedAt.toLocaleDateString()}
-                    </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                    <User className="h-3 w-3 mr-1" />
+                    Uploaded by {doc.uploadedBy}
                   </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      onClick={() => setSelectedDocument(document)}
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      View
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-xs border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      <Download className="h-4 w-4 mr-1" />
-                      Download
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(document.id)}
-                      className="border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    Uploaded on {doc.uploadedAt.toLocaleDateString()}
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-              <FolderOpen className="h-12 w-12 text-gray-400 dark:text-gray-500" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-              {documents.length === 0 ? "No documents yet" : "No documents match your search"}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              {documents.length === 0 
-                ? "Start by uploading your first document"
-                : "Try adjusting your search or filter criteria"
-              }
-            </p>
-            {documents.length === 0 && (
-              <Button
-                onClick={() => setShowUpload(true)}
-                className="bg-blue-500 hover:bg-blue-600 text-white"
-              >
-                Upload Your First Document
-              </Button>
-            )}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Size
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Uploaded By
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Uploaded At
+                  </th>
+                  <th className="px-6 py-3 relative">
+                    <span className="sr-only">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {filteredDocuments.map((doc) => (
+                  <tr key={doc.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="mr-4">{getFileIcon(doc.type)}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">{doc.name}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Badge className={getCategoryColor(doc.category)}>
+                        <span className="capitalize">{doc.category}</span>
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{getFileSize(doc.size)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{doc.uploadedBy}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{doc.uploadedAt.toLocaleDateString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-700">
+                          <DropdownMenuItem className="dark:hover:bg-gray-700 dark:text-white">
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Document
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="dark:hover:bg-gray-700 dark:text-white">
+                            <Download className="h-4 w-4 mr-2" />
+                            Download
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="dark:hover:bg-gray-700 dark:text-white">
+                            <Share2 className="h-4 w-4 mr-2" />
+                            Share
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-600 dark:text-red-400 dark:hover:bg-red-900/20">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
-        {/* Document Preview Modal */}
-        {selectedDocument && (
-          <DocumentPreview
-            document={selectedDocument}
-            isOpen={!!selectedDocument}
-            onClose={() => setSelectedDocument(null)}
-          />
+        {filteredDocuments.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+              <FileText className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+              No documents found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              Try adjusting your search or filter criteria
+            </p>
+          </div>
         )}
       </div>
     </div>
