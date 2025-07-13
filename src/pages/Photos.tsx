@@ -81,11 +81,17 @@ const Photos = () => {
       };
       setPhotos((prev) => [newPhoto, ...prev]);
       setPendingFile(null);
+      setShowMetadataDialog(false);
     }
   };
 
   const handleMetadataCancel = () => {
     setPendingFile(null);
+    setShowMetadataDialog(false);
+  };
+
+  const handlePhotoRemove = (id: string) => {
+    setPhotos((prev) => prev.filter((photo) => photo.id !== id));
   };
 
   return (
@@ -161,7 +167,7 @@ const Photos = () => {
         {/* Photo Gallery */}
         {photos.length > 0 ? (
           <div className="max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <PhotoGallery photos={photos} />
+            <PhotoGallery photos={photos} onRemove={handlePhotoRemove} />
           </div>
         ) : (
           <div className="text-center py-16">
