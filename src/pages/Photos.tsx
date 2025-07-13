@@ -3,7 +3,8 @@ import Navigation from "@/components/Navigation";
 import PhotoGallery from "@/components/PhotoGallery";
 import PhotoMetadataDialog from "@/components/PhotoMetadataDialog";
 import StorageMetrics from "@/components/StorageMetrics";
-import FileUpload from "@/components/FileUpload";
+import FileUploadWithProgress from "@/components/FileUploadWithProgress";
+import BulkActions from "@/components/BulkActions";
 import { Button } from "@/components/ui/button";
 import { Plus, Upload } from "lucide-react";
 
@@ -39,10 +40,8 @@ const Photos = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [photos, setPhotos] = useState(mockPhotos);
   const [showMetadataDialog, setShowMetadataDialog] = useState(false);
-  const [pendingFile, setPendingFile] = useState<{
-    file: File;
-    preview: string;
-  } | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<Array<{file: File; preview: string}>>([]);
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
 
   // Mock storage data - would come from backend
   const storageData = {
@@ -50,48 +49,71 @@ const Photos = () => {
     total: 1024, // MB (1GB for free plan)
   };
 
-  const handleFileUpload = (files: File[]) => {
-    const file = files[0]; // Handle one file at a time for metadata collection
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPendingFile({
-          file,
-          preview: e.target?.result as string,
-        });
-        setShowMetadataDialog(true);
-      };
-      reader.readAsDataURL(file);
-    }
-    setShowUpload(false);
-  };
-
   const handleMetadataSave = (metadata: {
     title: string;
     description: string;
   }) => {
-    if (pendingFile) {
-      const newPhoto = {
-        id: Date.now().toString(),
-        url: pendingFile.preview,
-        title: metadata.title,
-        description: metadata.description,
-        uploadedBy: "You",
-        uploadedAt: new Date(),
-      };
-      setPhotos((prev) => [newPhoto, ...prev]);
-      setPendingFile(null);
+    if (pendingFiles) {
+      pendingFiles.forEach(pendingFile => {
+        const newPhoto = {
+          id: Date.now().toString(),
+          url: pendingFile.preview,
+          title: metadata.title,
+          description: metadata.description,
+          uploadedBy: "You",
+          uploadedAt: new Date(),
+        };
+        setPhotos((prev) => [newPhoto, ...prev]);
+      });
+      setPendingFiles([]);
       setShowMetadataDialog(false);
     }
   };
 
   const handleMetadataCancel = () => {
-    setPendingFile(null);
+    setPendingFiles([]);
     setShowMetadataDialog(false);
   };
 
   const handlePhotoRemove = (id: string) => {
     setPhotos((prev) => prev.filter((photo) => photo.id !== id));
+  };
+
+  const handleFileUpload = (files: File[]) => {
+    const newPendingFiles = files.map(file => {
+      const reader = new FileReader();
+      return new Promise<{file: File; preview: string}>((resolve) => {
+        reader.onload = (e) => {
+          resolve({
+            file,
+            preview: e.target?.result as string,
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(newPendingFiles).then(results => {
+      setPendingFiles(results);
+      if (results.length > 0) {
+        setShowMetadataDialog(true);
+      }
+    });
+    setShowUpload(false);
+  };
+
+  const handleBulkDownload = (selectedIds: string[]) => {
+    selectedIds.forEach(photoId => {
+      const photo = photos.find(p => p.id === photoId);
+      if (photo) {
+        const link = document.createElement('a');
+        link.href = photo.url;
+        link.download = `${photo.title}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    });
   };
 
   return (
@@ -133,13 +155,26 @@ const Photos = () => {
               <Upload className="h-5 w-5 mr-2 text-rose-500" />
               Upload New Photos
             </h2>
-            <FileUpload
+            <FileUploadWithProgress
               onFileSelect={handleFileUpload}
               acceptedTypes="image/*"
-              multiple={false}
+              multiple={true}
               maxSize={5}
             />
           </div>
+        )}
+
+        {/* Bulk Actions */}
+        {photos.length > 0 && (
+          <BulkActions
+            items={photos}
+            selectedItems={selectedPhotos}
+            onSelectionChange={setSelectedPhotos}
+            onBulkDownload={handleBulkDownload}
+            getItemId={(photo) => photo.id}
+            getItemName={(photo) => photo.title}
+            className="mb-6"
+          />
         )}
 
         {/* Stats */}
@@ -190,12 +225,12 @@ const Photos = () => {
         )}
       </div>
 
-      {/* Photo Metadata Dialog */}
+      {/* Photo Metadata Dialog - Updated for multiple files */}
       <PhotoMetadataDialog
         isOpen={showMetadataDialog}
         onClose={handleMetadataCancel}
         onSave={handleMetadataSave}
-        imagePreview={pendingFile?.preview}
+        imagePreview={pendingFiles[0]?.preview}
       />
     </div>
   );
