@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { X, Download, Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
+import { useState } from 'react';
+import { X, Download, Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Photo {
   id: string;
@@ -13,10 +14,9 @@ interface Photo {
 
 interface PhotoGalleryProps {
   photos: Photo[];
-  onRemove: (id: string) => void;
 }
 
-const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
+const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [likedPhotos, setLikedPhotos] = useState<Set<string>>(new Set());
 
@@ -47,12 +47,10 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <h3 className="text-white text-sm font-medium truncate">
-                {photo.title}
-              </h3>
+              <h3 className="text-white text-sm font-medium truncate">{photo.title}</h3>
               <p className="text-white/80 text-xs">by {photo.uploadedBy}</p>
             </div>
-
+            
             {/* Like button */}
             <button
               onClick={(e) => {
@@ -61,28 +59,12 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
               }}
               className="absolute top-3 right-3 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
             >
-              <Heart
+              <Heart 
                 className={`h-4 w-4 ${
-                  likedPhotos.has(photo.id)
-                    ? "text-red-500 fill-current"
-                    : "text-gray-600"
-                }`}
-              />
-            </button>
-            {/* Delete button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemove(photo.id);
-              }}
-              className="absolute top-3 left-3 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
-            >
-              <X
-                className={`h-4 w-4 ${
-                  likedPhotos.has(photo.id)
-                    ? "text-red-500 fill-current"
-                    : "text-gray-600"
-                }`}
+                  likedPhotos.has(photo.id) 
+                    ? 'text-red-500 fill-current' 
+                    : 'text-gray-600'
+                }`} 
               />
             </button>
           </div>
@@ -91,10 +73,7 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
 
       {/* Photo Modal */}
       {selectedPhoto && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-          onClick={() => setSelectedPhoto(null)}
-        >
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setSelectedPhoto(null)}>
           <div className="relative max-w-4xl max-h-full w-full h-full flex items-center justify-center">
             <img
               src={selectedPhoto.url}
@@ -102,7 +81,7 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
               className="max-w-full max-h-full object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
-
+            
             {/* Close button */}
             <Button
               onClick={() => setSelectedPhoto(null)}
@@ -112,16 +91,12 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
             >
               <X className="h-6 w-6" />
             </Button>
-
+            
             {/* Photo info */}
             <div className="absolute bottom-4 left-4 right-4 bg-black/80 text-white p-4 rounded-lg backdrop-blur-sm">
-              <h2 className="text-xl font-semibold mb-2">
-                {selectedPhoto.title}
-              </h2>
+              <h2 className="text-xl font-semibold mb-2">{selectedPhoto.title}</h2>
               {selectedPhoto.description && (
-                <p className="text-gray-300 mb-2">
-                  {selectedPhoto.description}
-                </p>
+                <p className="text-gray-300 mb-2">{selectedPhoto.description}</p>
               )}
               <div className="flex justify-between items-center text-sm">
                 <span>Uploaded by {selectedPhoto.uploadedBy}</span>
