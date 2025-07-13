@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { InviteMemberDialog } from "@/components/InviteMemberDialog";
@@ -46,20 +47,14 @@ interface FamilyMember {
     documentsShared: number;
     messagesPosted: number;
   };
-  activities: {
-    photos: number;
-    documents: number;
-    messages: number;
-  };
+  // Add missing properties to fix the build error
+  activities: Array<{
+    type: string;
+    description: string;
+    timestamp: Date;
+  }>;
   storageUsed: number;
   status: "active" | "inactive" | "pending";
-  phone?: string;
-  bio?: string;
-  recentActivities?: Array<{
-    type: 'photo' | 'document' | 'message';
-    action: string;
-    date: Date;
-  }>;
 }
 
 const mockMembers: FamilyMember[] = [
@@ -85,11 +80,9 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 12,
       messagesPosted: 89,
     },
-    activities: {
-      photos: 245,
-      documents: 12,
-      messages: 89,
-    },
+    activities: [
+      { type: "upload", description: "Uploaded family photo", timestamp: new Date() }
+    ],
     storageUsed: 1.2,
     status: "active",
   },
@@ -115,11 +108,9 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 8,
       messagesPosted: 134,
     },
-    activities: {
-      photos: 156,
-      documents: 8,
-      messages: 134,
-    },
+    activities: [
+      { type: "message", description: "Posted a message", timestamp: new Date() }
+    ],
     storageUsed: 0.8,
     status: "active",
   },
@@ -145,11 +136,9 @@ const mockMembers: FamilyMember[] = [
       documentsShared: 0,
       messagesPosted: 45,
     },
-    activities: {
-      photos: 89,
-      documents: 0,
-      messages: 45,
-    },
+    activities: [
+      { type: "photo", description: "Uploaded a photo", timestamp: new Date() }
+    ],
     storageUsed: 0.3,
     status: "active",
   },
@@ -192,13 +181,6 @@ const Admin = () => {
         documentsShared: 0,
         messagesPosted: 0,
       },
-      activities: {
-        photos: 0,
-        documents: 0,
-        messages: 0,
-      },
-      storageUsed: 0,
-      status: "pending",
     };
     setMembers([...members, newMember]);
     setShowInviteDialog(false);
