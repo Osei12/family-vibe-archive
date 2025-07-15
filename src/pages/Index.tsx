@@ -288,7 +288,7 @@ const Index = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
-            <Link to="/photos">
+            <Link to="/pricing">
               <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 rounded-xl">
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />

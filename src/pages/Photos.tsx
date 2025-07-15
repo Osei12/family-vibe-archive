@@ -307,8 +307,11 @@ import PhotoGallery from "@/components/PhotoGallery";
 import PhotoMetadataDialog from "@/components/PhotoMetadataDialog";
 import StorageMetrics from "@/components/StorageMetrics";
 import FileUpload from "@/components/FileUpload";
+import PhotoFilters from "@/components/PhotoFilters";
 import { Button } from "@/components/ui/button";
-import { Plus, Upload } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Plus, Upload, Search, Filter, Video, Image, Calendar } from "lucide-react";
 
 // Mock data - in a real app, this would come from a database
 const mockPhotos = [
@@ -319,6 +322,9 @@ const mockPhotos = [
     description: "Our beloved family cat enjoying a sunny afternoon",
     uploadedBy: "Sarah",
     uploadedAt: new Date("2024-01-15"),
+    type: "image" as const,
+    size: "2.5 MB",
+    tags: ["pets", "family", "cute"]
   },
   {
     id: "2",
@@ -327,6 +333,9 @@ const mockPhotos = [
     description: "Beautiful deer we spotted during our family hike",
     uploadedBy: "Dad",
     uploadedAt: new Date("2024-01-10"),
+    type: "image" as const,
+    size: "3.1 MB",
+    tags: ["nature", "hiking", "animals"]
   },
   {
     id: "3",
@@ -335,7 +344,32 @@ const mockPhotos = [
     description: "Where we gather for movie nights",
     uploadedBy: "Mom",
     uploadedAt: new Date("2024-01-05"),
+    type: "image" as const,
+    size: "1.8 MB",
+    tags: ["home", "family", "memories"]
   },
+  {
+    id: "4",
+    url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+    title: "Birthday Party Video",
+    description: "Emma's 16th birthday celebration",
+    uploadedBy: "Dad",
+    uploadedAt: new Date("2024-01-12"),
+    type: "video" as const,
+    size: "15.2 MB",
+    tags: ["birthday", "celebration", "party"]
+  },
+  {
+    id: "5",
+    url: "https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?w=400&h=400&fit=crop",
+    title: "Christmas Morning",
+    description: "Opening presents together",
+    uploadedBy: "Mom",
+    uploadedAt: new Date("2023-12-25"),
+    type: "image" as const,
+    size: "4.2 MB",
+    tags: ["christmas", "presents", "holiday"]
+  }
 ];
 
 const Photos = () => {
@@ -345,7 +379,16 @@ const Photos = () => {
   const [pendingFile, setPendingFile] = useState<{
     file: File;
     preview: string;
+    type: 'image' | 'video';
   } | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({
+    uploader: "",
+    dateRange: { start: "", end: "" },
+    tags: [] as string[],
+    sortBy: "newest",
+    type: "all" // all, image, video
+  });
 
   // Mock storage data - would come from backend
   const storageData = {
@@ -356,11 +399,13 @@ const Photos = () => {
   const handleFileUpload = (files: File[]) => {
     const file = files[0]; // Handle one file at a time for metadata collection
     if (file) {
+      const isVideo = file.type.startsWith('video/');
       const reader = new FileReader();
       reader.onload = (e) => {
         setPendingFile({
           file,
           preview: e.target?.result as string,
+          type: isVideo ? 'video' : 'image'
         });
         setShowMetadataDialog(true);
       };
@@ -381,6 +426,9 @@ const Photos = () => {
         description: metadata.description,
         uploadedBy: "You",
         uploadedAt: new Date(),
+        type: pendingFile.type,
+        size: `${(pendingFile.file.size / (1024 * 1024)).toFixed(1)} MB`,
+        tags: ["new-upload"]
       };
       setPhotos((prev) => [newPhoto, ...prev]);
       setPendingFile(null);
@@ -397,6 +445,48 @@ const Photos = () => {
     setPhotos((prev) => prev.filter((photo) => photo.id !== id));
   };
 
+  // Filter photos based on search and filters
+  const filteredPhotos = photos.filter((photo) => {
+    const matchesSearch = 
+      photo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      photo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      photo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesUploader = !filters.uploader || 
+      photo.uploadedBy.toLowerCase().includes(filters.uploader.toLowerCase());
+
+    const matchesType = filters.type === "all" || photo.type === filters.type;
+
+    const matchesDateRange = !filters.dateRange.start || !filters.dateRange.end ||
+      (photo.uploadedAt >= new Date(filters.dateRange.start) && 
+       photo.uploadedAt <= new Date(filters.dateRange.end));
+
+    return matchesSearch && matchesUploader && matchesType && matchesDateRange;
+  }).sort((a, b) => {
+    switch (filters.sortBy) {
+      case "oldest":
+        return a.uploadedAt.getTime() - b.uploadedAt.getTime();
+      case "newest":
+      default:
+        return b.uploadedAt.getTime() - a.uploadedAt.getTime();
+    }
+  });
+
+  const handleFilterChange = (newFilters: typeof filters) => {
+    setFilters(newFilters);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      uploader: "",
+      dateRange: { start: "", end: "" },
+      tags: [],
+      sortBy: "newest",
+      type: "all"
+    });
+    setSearchTerm("");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
       <Navigation />
@@ -406,10 +496,10 @@ const Photos = () => {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 space-y-4 lg:space-y-0">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-neutral-200 mb-2">
-              Family Photos
+              Family Media
             </h1>
             <p className="text-gray-600 dark:text-neutral-400">
-              Share and cherish your precious moments together
+              Share photos, videos, and cherish your precious moments together
             </p>
           </div>
 
@@ -424,9 +514,100 @@ const Photos = () => {
               className="bg-rose-500 hover:bg-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <Plus className="h-5 w-5 mr-2" />
-              Add Photos
+              Add Media
             </Button>
           </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+          <div className="flex flex-col lg:flex-row gap-4 mb-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search photos, videos, descriptions, or tags..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="flex items-center">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Advanced Filters
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[400px] sm:w-[500px]">
+                  <SheetHeader>
+                    <SheetTitle>Advanced Filters</SheetTitle>
+                    <SheetDescription>
+                      Filter your media by date, uploader, type, and more
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-6">
+                    <PhotoFilters 
+                      onFilterChange={handleFilterChange}
+                      currentFilters={filters}
+                    />
+                    <Button onClick={clearFilters} variant="outline" className="w-full">
+                      Clear All Filters
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
+                <Button
+                  variant={filters.type === "all" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setFilters(prev => ({ ...prev, type: "all" }))}
+                  className="rounded-r-none"
+                >
+                  All
+                </Button>
+                <Button
+                  variant={filters.type === "image" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setFilters(prev => ({ ...prev, type: "image" }))}
+                  className="rounded-none"
+                >
+                  <Image className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={filters.type === "video" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setFilters(prev => ({ ...prev, type: "video" }))}
+                  className="rounded-l-none"
+                >
+                  <Video className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Filters Display */}
+          {(searchTerm || filters.uploader || filters.type !== "all" || filters.dateRange.start) && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {searchTerm && (
+                <div className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm">
+                  Search: "{searchTerm}"
+                </div>
+              )}
+              {filters.uploader && (
+                <div className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm">
+                  Uploader: {filters.uploader}
+                </div>
+              )}
+              {filters.type !== "all" && (
+                <div className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-sm">
+                  Type: {filters.type}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Upload Section */}
@@ -438,50 +619,61 @@ const Photos = () => {
             </h2>
             <FileUpload
               onFileSelect={handleFileUpload}
-              acceptedTypes="image/*"
+              acceptedTypes="image/*,video/*"
               multiple={false}
-              maxSize={5}
+              maxSize={50}
             />
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              Supported formats: JPEG, PNG, GIF, MP4, MOV, AVI. Max size: 50MB per file.
+            </p>
           </div>
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-3xl font-bold text-rose-500 mb-2">
-              {photos.length}
+              {filteredPhotos.length}
             </div>
-            <div className="text-gray-600">Total Photos</div>
+            <div className="text-gray-600 dark:text-gray-400">Total Media</div>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-3xl font-bold text-blue-500 mb-2">
-              {new Set(photos.map((p) => p.uploadedBy)).size}
+              {filteredPhotos.filter(p => p.type === 'image').length}
             </div>
-            <div className="text-gray-600">Contributors</div>
+            <div className="text-gray-600 dark:text-gray-400">Photos</div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="text-3xl font-bold text-purple-500 mb-2">
+              {filteredPhotos.filter(p => p.type === 'video').length}
+            </div>
+            <div className="text-gray-600 dark:text-gray-400">Videos</div>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-3xl font-bold text-green-500 mb-2">
-              {Math.round((photos.length / 30) * 100)}%
+              {new Set(filteredPhotos.map((p) => p.uploadedBy)).size}
             </div>
-            <div className="text-gray-600">This Month</div>
+            <div className="text-gray-600 dark:text-gray-400">Contributors</div>
           </div>
         </div>
 
-        {/* Photo Gallery */}
-        {photos.length > 0 ? (
+        {/* Media Gallery */}
+        {filteredPhotos.length > 0 ? (
           <div className="max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <PhotoGallery photos={photos} onRemove={handlePhotoRemove} />
+            <PhotoGallery photos={filteredPhotos} onRemove={handlePhotoRemove} />
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
               <Upload className="h-12 w-12 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              No photos yet
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
+              No media found
             </h3>
-            <p className="text-gray-600 mb-6">
-              Start building your family photo collection
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {searchTerm || filters.uploader || filters.type !== "all" 
+                ? "Try adjusting your search or filters to find more content." 
+                : "Start building your family media collection"}
             </p>
             <Button
               onClick={() => setShowUpload(true)}
