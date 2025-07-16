@@ -1,6 +1,5 @@
-
-import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 import {
   Users,
   HardDrive,
@@ -27,77 +26,77 @@ import {
   Upload,
   BarChart3,
   UserCog,
-  Database
-} from 'lucide-react';
+  Database,
+} from "lucide-react";
 
 const adminMenuItems = [
   {
-    title: 'Overview',
-    url: '/admin',
+    title: "Overview",
+    url: "/admin",
     icon: Activity,
-    exact: true
+    exact: true,
   },
   {
-    title: 'Family Members',
-    url: '/admin/members',
-    icon: Users
+    title: "Family Members",
+    url: "/admin/members",
+    icon: Users,
   },
   {
-    title: 'Storage Management',
-    url: '/admin/storage',
-    icon: HardDrive
+    title: "Storage Management",
+    url: "/admin/storage",
+    icon: HardDrive,
   },
   {
-    title: 'User Roles',
-    url: '/admin/roles',
-    icon: UserCog
+    title: "User Roles",
+    url: "/admin/roles",
+    icon: UserCog,
   },
-  {
-    title: 'Analytics',
-    url: '/admin/analytics',
-    icon: BarChart3
-  },
-  {
-    title: 'Backup & Restore',
-    url: '/admin/backup',
-    icon: Database
-  }
+  // {
+  //   title: 'Analytics',
+  //   url: '/admin/analytics',
+  //   icon: BarChart3
+  // },
+  // {
+  //   title: 'Backup & Restore',
+  //   url: '/admin/backup',
+  //   icon: Database
+  // }
 ];
 
 const systemMenuItems = [
   {
-    title: 'Settings',
-    url: '/admin/settings',
-    icon: Settings
+    title: "Settings",
+    url: "/admin/settings",
+    icon: Settings,
   },
+  // {
+  //   title: 'Security',
+  //   url: '/admin/security',
+  //   icon: Shield
+  // },
+  // {
+  //   title: 'Notifications',
+  //   url: '/admin/notifications',
+  //   icon: Bell
+  // },
   {
-    title: 'Security',
-    url: '/admin/security',
-    icon: Shield
+    title: "Privacy",
+    url: "/admin/privacy",
+    icon: Lock,
   },
-  {
-    title: 'Notifications',
-    url: '/admin/notifications',
-    icon: Bell
-  },
-  {
-    title: 'Privacy',
-    url: '/admin/privacy',
-    icon: Lock
-  }
 ];
 
 const billingMenuItems = [
   {
-    title: 'Subscription',
-    url: '/admin/subscription',
-    icon: CreditCard
+    title: "Subscription",
+    url: "/admin/subscription",
+    icon: CreditCard,
   },
   {
-    title: 'Billing History',
-    url: '/admin/billing',
-    icon: FileText
-  }
+    title: "Billing History",
+    url: "/admin/billing",
+    icon: FileText,
+  },
 ];
 
 export function AdminSidebar() {
@@ -113,13 +112,16 @@ export function AdminSidebar() {
   };
 
   const getNavClassName = (path: string, exact = false) => {
-    return isActive(path, exact) 
-      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
+    return isActive(path, exact)
+      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
       : "hover:bg-sidebar-accent/50";
   };
 
   return (
-    <Sidebar className={state === "collapsed" ? "w-14" : "w-64"} collapsible="icon">
+    <Sidebar
+      className={state === "collapsed" ? "w-14" : "w-64"}
+      collapsible="icon"
+    >
       <SidebarContent>
         {/* Management Section */}
         <SidebarGroup>
@@ -129,8 +131,8 @@ export function AdminSidebar() {
               {adminMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
+                    <NavLink
+                      to={item.url}
                       end={item.exact}
                       className={getNavClassName(item.url, item.exact)}
                     >
@@ -152,7 +154,7 @@ export function AdminSidebar() {
               {systemMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
+                    <NavLink
                       to={item.url}
                       className={getNavClassName(item.url)}
                     >
@@ -174,7 +176,7 @@ export function AdminSidebar() {
               {billingMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
+                    <NavLink
                       to={item.url}
                       className={getNavClassName(item.url)}
                     >
