@@ -16,6 +16,7 @@ interface PhotoMetadataDialogProps {
   onClose: () => void;
   onSave: (metadata: { title: string; description: string }) => void;
   imagePreview?: string;
+  type: "image" | "video";
 }
 
 const PhotoMetadataDialog = ({
@@ -23,6 +24,7 @@ const PhotoMetadataDialog = ({
   onClose,
   onSave,
   imagePreview,
+  type,
 }: PhotoMetadataDialogProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -50,11 +52,21 @@ const PhotoMetadataDialog = ({
         <div className="space-y-4">
           {imagePreview && (
             <div className="w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-full h-full object-cover"
-              />
+              {type === "image" ? (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <video
+                  src={imagePreview}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  muted
+                  playsInline
+                  preload="metadata"
+                />
+              )}
             </div>
           )}
 

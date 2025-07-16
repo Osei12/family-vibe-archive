@@ -731,6 +731,7 @@ const Media = () => {
         isOpen={showMetadataDialog}
         onClose={handleMetadataCancel}
         onSave={handleMetadataSave}
+        type={pendingFile?.type === "video" ? "video" : "image"} // fallback safety
         imagePreview={pendingFile?.preview}
       />
     </div>
