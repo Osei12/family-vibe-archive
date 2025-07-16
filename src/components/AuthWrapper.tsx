@@ -1,17 +1,19 @@
 
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import PinAuth from './PinAuth';
 import { useSessionTimeout } from '@/hooks/useSessionTimeout';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AuthWrapperProps {
   children: React.ReactNode;
 }
 
 const AuthWrapper = ({ children }: AuthWrapperProps) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // In real app, check actual auth status
   const [showPinAuth, setShowPinAuth] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   // Don't show session timeout on login/signup pages
   const publicRoutes = ['/login', '/signup'];
@@ -20,9 +22,9 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
   // Redirect logged-in users away from landing page
   useEffect(() => {
     if (isAuthenticated && location.pathname === '/') {
-      window.location.href = '/photos';
+      navigate('/photos');
     }
-  }, [isAuthenticated, location.pathname]);
+  }, [isAuthenticated, location.pathname, navigate]);
 
   const { resetTimer } = useSessionTimeout({
     timeout: 5 * 60 * 1000, // 5 minutes
@@ -39,10 +41,8 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
     setShowPinAuth(false);
-    // In real app, clear auth tokens and redirect to login
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   // Reset timer on route change (user activity)

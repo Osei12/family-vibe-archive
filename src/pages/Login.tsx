@@ -1,27 +1,50 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login process
-    setTimeout(() => {
+    try {
+      const success = await login(email, password);
+      if (success) {
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Family Archive!",
+        });
+        navigate('/photos');
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Invalid email or password. Try: test@family.com / password123",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Login error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-      console.log('Login attempt:', { email, password });
-    }, 2000);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -45,6 +68,10 @@ const Login = () => {
             <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
             <CardDescription>
               Enter your credentials to access your family archive
+              <br />
+              <span className="text-sm text-blue-600 mt-2 block">
+                Test credentials: test@family.com / password123
+              </span>
             </CardDescription>
           </CardHeader>
 

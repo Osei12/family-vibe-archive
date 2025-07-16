@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { AuthProvider } from "@/contexts/AuthContext";
 import AuthWrapper from "./components/AuthWrapper";
 import Index from "./pages/Index";
 import Photos from "./pages/Photos";
@@ -27,7 +28,8 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthWrapper>
+          <AuthProvider>
+            <AuthWrapper>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
@@ -41,7 +43,8 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </AuthWrapper>
+            </AuthWrapper>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

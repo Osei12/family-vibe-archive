@@ -10,11 +10,13 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { User, Settings, LogOut, Shield, HelpCircle } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const UserDropdown = () => {
+  const { logout, user } = useAuth();
+
   const handleLogout = () => {
-    // TODO: Implement logout functionality
-    console.log("Logging out...");
+    logout();
   };
 
   return (
@@ -22,15 +24,15 @@ const UserDropdown = () => {
       <DropdownMenuTrigger asChild>
         <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-rose-500 transition-all">
           <AvatarFallback className="bg-rose-100 text-rose-600 text-sm dark:bg-rose-900 dark:text-rose-300">
-            SJ
+            {user?.initials || 'SJ'}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Sarah Johnson</p>
-            <p className="text-xs leading-none text-muted-foreground">sarah@example.com</p>
+            <p className="text-sm font-medium leading-none">{user?.name || 'Sarah Johnson'}</p>
+            <p className="text-xs leading-none text-muted-foreground">{user?.email || 'sarah@example.com'}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
