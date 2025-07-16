@@ -158,7 +158,10 @@ const Index = () => {
       <LandingNavigation />
 
       {/* Hero Section - with improved responsiveness */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center">
+      <section
+        id="#"
+        className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center"
+      >
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Floating family member avatars with improved responsive positioning */}
@@ -324,7 +327,7 @@ const Index = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm">
+      <section className="py-16 bg-gradient-to-br from-gray-50 to-white backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -341,7 +344,7 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
+      {/* <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
@@ -417,7 +420,7 @@ const Index = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
@@ -469,7 +472,7 @@ const Index = () => {
       </section>
 
       {/* Security Section */}
-      <div className="bg-gray-50 dark:bg-gray-800/50 py-16">
+      <div id="security" className="bg-gray-50 dark:bg-gray-800/50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-xl w-fit mx-auto mb-6">

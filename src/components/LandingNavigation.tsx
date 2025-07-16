@@ -18,8 +18,10 @@ const LandingNavigation = () => {
   };
 
   const navItems = [
+    { label: "Home", sectionId: "#" },
     { label: "Features", sectionId: "features" },
-    { label: "Pricing", sectionId: "pricing" },
+    { label: "Security", sectionId: "security" },
+    // { label: "Explore", sectionId: "explore" },
     { label: "FAQ", sectionId: "faq" },
   ];
 
