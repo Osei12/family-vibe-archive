@@ -85,15 +85,17 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
             </button>
 
             {/* Delete button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemove(photo.id);
-              }}
-              className="absolute top-3 left-3 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
-            >
-              <X className="h-4 w-4 text-gray-600" />
-            </button>
+            {photo.uploadedBy.includes("You") && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove(photo.id);
+                }}
+                className="absolute top-3 left-3 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
+              >
+                <X className="h-4 w-4 text-gray-600" />
+              </button>
+            )}
           </div>
         ))}
       </div>
