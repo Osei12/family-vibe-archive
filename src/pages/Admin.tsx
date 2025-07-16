@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Routes, Route, Navigate, Link } from "react-router-dom";
-import Navigation, { navItems } from "@/components/Navigation";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { Button } from "@/components/ui/button";
@@ -324,6 +323,13 @@ const AdminOverview = () => {
   );
 };
 
+const navItems = [
+  // { path: "/", label: "Home", icon: Home },
+  { path: "/media", label: "Media", icon: Camera },
+  { path: "/documents", label: "Documents", icon: FileText },
+  { path: "/messages", label: "Messages", icon: MessageCircle },
+  ,
+];
 const Admin = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/30 to-orange-50/30 dark:from-gray-900 dark:to-gray-800">
