@@ -16,6 +16,7 @@ import {
   Calendar,
   UserPlus,
   HardDrive,
+  TrendingUp,
 } from "lucide-react";
 import { InviteMemberDialog } from "@/components/InviteMemberDialog";
 import { MemberProfileDialog } from "@/components/MemberProfileDialog";
@@ -132,11 +133,11 @@ const AdminOverview = () => {
         <div className="flex flex-col sm:flex-row gap-3">
           <InviteMemberDialog />
           <Button
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-            onClick={handleUpgrade}
+            size="sm"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           >
-            <HardDrive className="h-4 w-4 mr-2" />
-            Manage Storage
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Upgrade Plan
           </Button>
         </div>
       </div>
