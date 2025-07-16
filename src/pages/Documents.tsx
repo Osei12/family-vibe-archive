@@ -4,6 +4,7 @@ import FileUploadWithProgress from "@/components/FileUploadWithProgress";
 import DocumentPreview from "@/components/DocumentPreview";
 import BulkActions from "@/components/BulkActions";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -19,6 +20,8 @@ import {
   Calendar,
   User,
   Folder,
+  Trash2,
+  CheckSquare,
 } from "lucide-react";
 
 interface Document {
@@ -143,6 +146,27 @@ const Documents = () => {
         }
       }
     });
+  };
+
+  const handleBulkDelete = (selectedIds: string[]) => {
+    setDocuments(prev => prev.filter(doc => !selectedIds.includes(doc.id)));
+    setSelectedDocuments([]);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedDocuments.length === filteredDocuments.length) {
+      setSelectedDocuments([]);
+    } else {
+      setSelectedDocuments(filteredDocuments.map(doc => doc.id));
+    }
+  };
+
+  const handleDocumentSelect = (docId: string) => {
+    setSelectedDocuments(prev => 
+      prev.includes(docId) 
+        ? prev.filter(id => id !== docId)
+        : [...prev, docId]
+    );
   };
 
   const formatFileSize = (bytes: number) => {
@@ -290,17 +314,50 @@ const Documents = () => {
 
           {/* Documents List */}
           <div className="lg:col-span-3">
-            {/* Bulk Actions */}
+            {/* Selection Controls */}
             {filteredDocuments.length > 0 && (
-              <BulkActions
-                items={filteredDocuments}
-                selectedItems={selectedDocuments}
-                onSelectionChange={setSelectedDocuments}
-                onBulkDownload={handleBulkDownload}
-                getItemId={(doc) => doc.id}
-                getItemName={(doc) => doc.name}
-                className="mb-6"
-              />
+              <div className="mb-6 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Button
+                      onClick={handleSelectAll}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center space-x-2"
+                    >
+                      <CheckSquare className="h-4 w-4" />
+                      <span>
+                        {selectedDocuments.length === filteredDocuments.length ? "Deselect All" : "Select All"}
+                      </span>
+                    </Button>
+                    {selectedDocuments.length > 0 && (
+                      <span className="text-sm text-gray-600">
+                        {selectedDocuments.length} of {filteredDocuments.length} selected
+                      </span>
+                    )}
+                  </div>
+                  {selectedDocuments.length > 0 && (
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        onClick={() => handleBulkDownload(selectedDocuments)}
+                        size="sm"
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Selected
+                      </Button>
+                      <Button
+                        onClick={() => handleBulkDelete(selectedDocuments)}
+                        size="sm"
+                        variant="destructive"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete Selected
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
 
             {filteredDocuments.length > 0 ? (
@@ -308,11 +365,22 @@ const Documents = () => {
                 {filteredDocuments.map((doc) => (
                   <div
                     key={doc.id}
-                    className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300"
+                    className={`bg-white rounded-xl p-6 shadow-sm border transition-all duration-300 hover:shadow-md ${
+                      selectedDocuments.includes(doc.id) 
+                        ? "border-blue-200 bg-blue-50" 
+                        : "border-gray-100"
+                    }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-4 flex-1">
-                        <div className="text-3xl">{getFileIcon(doc.type)}</div>
+                        <div className="flex items-center space-x-3">
+                          <Checkbox
+                            checked={selectedDocuments.includes(doc.id)}
+                            onCheckedChange={() => handleDocumentSelect(doc.id)}
+                            className="mt-1"
+                          />
+                          <div className="text-3xl">{getFileIcon(doc.type)}</div>
+                        </div>
 
                         <div className="flex-1 min-w-0">
                           <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">

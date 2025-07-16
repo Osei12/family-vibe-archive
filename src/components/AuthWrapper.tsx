@@ -14,8 +14,15 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
   const location = useLocation();
 
   // Don't show session timeout on login/signup pages
-  const publicRoutes = ['/login', '/signup', '/'];
+  const publicRoutes = ['/login', '/signup'];
   const isPublicRoute = publicRoutes.includes(location.pathname);
+  
+  // Redirect logged-in users away from landing page
+  useEffect(() => {
+    if (isAuthenticated && location.pathname === '/') {
+      window.location.href = '/photos';
+    }
+  }, [isAuthenticated, location.pathname]);
 
   const { resetTimer } = useSessionTimeout({
     timeout: 5 * 60 * 1000, // 5 minutes

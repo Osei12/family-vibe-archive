@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Navigation from "@/components/Navigation";
+import LandingNavigation from "@/components/LandingNavigation";
+import CounterStat from "@/components/CounterStat";
 import LiveDemo from "@/components/LiveDemo";
 import FAQ from "@/components/FAQ";
 import {
@@ -53,10 +54,10 @@ const Index = () => {
   ];
 
   const stats = [
-    { icon: Users, label: "Family Members", value: "12" },
-    { icon: Camera, label: "Photos Shared", value: "247" },
-    { icon: Heart, label: "Messages of Love", value: "89" },
-    { icon: File, label: "Documents", value: "156" },
+    { icon: Users, label: "Family Members", value: 12847 },
+    { icon: Camera, label: "Photos Shared", value: 1247892 },
+    { icon: Heart, label: "Messages of Love", value: 89234 },
+    { icon: File, label: "Documents", value: 156789 },
   ];
 
   const pricingPlans = [
@@ -154,7 +155,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-gray-900 dark:to-gray-800">
-      <Navigation />
+      <LandingNavigation />
 
       {/* Hero Section - with improved responsiveness */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center">
@@ -327,26 +328,20 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <div
+              <CounterStat
                 key={index}
-                className="text-center animate-fade-in hover:scale-105 transition-transform duration-300"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl mb-4">
-                  <stat.icon className="h-6 w-6 text-rose-600" />
-                </div>
-                <div className="text-3xl font-bold text-gray-800 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-600 text-sm">{stat.label}</div>
-              </div>
+                icon={stat.icon}
+                label={stat.label}
+                targetValue={stat.value}
+                duration={2000 + index * 200}
+              />
             ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
@@ -425,7 +420,7 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
