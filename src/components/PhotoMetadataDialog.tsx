@@ -1,10 +1,15 @@
-
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface PhotoMetadataDialogProps {
   isOpen: boolean;
@@ -13,20 +18,25 @@ interface PhotoMetadataDialogProps {
   imagePreview?: string;
 }
 
-const PhotoMetadataDialog = ({ isOpen, onClose, onSave, imagePreview }: PhotoMetadataDialogProps) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+const PhotoMetadataDialog = ({
+  isOpen,
+  onClose,
+  onSave,
+  imagePreview,
+}: PhotoMetadataDialogProps) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleSave = () => {
-    onSave({ title: title || 'Untitled Photo', description });
-    setTitle('');
-    setDescription('');
+    onSave({ title: title || "Untitled Photo", description });
+    setTitle("");
+    setDescription("");
     onClose();
   };
 
   const handleCancel = () => {
-    setTitle('');
-    setDescription('');
+    setTitle("");
+    setDescription("");
     onClose();
   };
 
@@ -36,18 +46,18 @@ const PhotoMetadataDialog = ({ isOpen, onClose, onSave, imagePreview }: PhotoMet
         <DialogHeader>
           <DialogTitle>Add Photo Details</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           {imagePreview && (
             <div className="w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
-              <img 
-                src={imagePreview} 
-                alt="Preview" 
+              <img
+                src={imagePreview}
+                alt="Preview"
                 className="w-full h-full object-cover"
               />
             </div>
           )}
-          
+
           <div className="space-y-2">
             <Label htmlFor="title">Photo Title</Label>
             <Input
@@ -57,7 +67,7 @@ const PhotoMetadataDialog = ({ isOpen, onClose, onSave, imagePreview }: PhotoMet
               placeholder="Enter a title for this photo"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="description">Description (Optional)</Label>
             <Textarea
@@ -74,8 +84,11 @@ const PhotoMetadataDialog = ({ isOpen, onClose, onSave, imagePreview }: PhotoMet
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={handleSave} className="bg-rose-500 hover:bg-rose-600">
-            Save Photo
+          <Button
+            onClick={handleSave}
+            className="bg-rose-500 hover:bg-rose-600"
+          >
+            Save Media
           </Button>
         </DialogFooter>
       </DialogContent>

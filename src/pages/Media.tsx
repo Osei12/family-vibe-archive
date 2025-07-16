@@ -303,18 +303,33 @@
 
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import PhotoGallery from "@/components/PhotoGallery";
+import PhotoGallery, { PhotoType } from "@/components/PhotoGallery";
 import PhotoMetadataDialog from "@/components/PhotoMetadataDialog";
 import StorageMetrics from "@/components/StorageMetrics";
 import FileUpload from "@/components/FileUpload";
 import PhotoFilters from "@/components/PhotoFilters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Plus, Upload, Search, Filter, Video, Image, Calendar } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Plus,
+  Upload,
+  Search,
+  Filter,
+  Video,
+  Image,
+  Calendar,
+} from "lucide-react";
 
 // Mock data - in a real app, this would come from a database
-const mockPhotos = [
+const mockPhotos: PhotoType[] = [
   {
     id: "1",
     url: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
@@ -324,7 +339,7 @@ const mockPhotos = [
     uploadedAt: new Date("2024-01-15"),
     type: "image" as const,
     size: "2.5 MB",
-    tags: ["pets", "family", "cute"]
+    tags: ["pets", "family", "cute"],
   },
   {
     id: "2",
@@ -335,7 +350,7 @@ const mockPhotos = [
     uploadedAt: new Date("2024-01-10"),
     type: "image" as const,
     size: "3.1 MB",
-    tags: ["nature", "hiking", "animals"]
+    tags: ["nature", "hiking", "animals"],
   },
   {
     id: "3",
@@ -346,19 +361,19 @@ const mockPhotos = [
     uploadedAt: new Date("2024-01-05"),
     type: "image" as const,
     size: "1.8 MB",
-    tags: ["home", "family", "memories"]
+    tags: ["home", "family", "memories"],
   },
-  {
-    id: "4",
-    url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-    title: "Birthday Party Video",
-    description: "Emma's 16th birthday celebration",
-    uploadedBy: "Dad",
-    uploadedAt: new Date("2024-01-12"),
-    type: "video" as const,
-    size: "15.2 MB",
-    tags: ["birthday", "celebration", "party"]
-  },
+  // {
+  //   id: "4",
+  //   url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+  //   title: "Birthday Party Video",
+  //   description: "Emma's 16th birthday celebration",
+  //   uploadedBy: "Dad",
+  //   uploadedAt: new Date("2024-01-12"),
+  //   type: "video" as const,
+  //   size: "15.2 MB",
+  //   tags: ["birthday", "celebration", "party"],
+  // },
   {
     id: "5",
     url: "https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?w=400&h=400&fit=crop",
@@ -368,18 +383,18 @@ const mockPhotos = [
     uploadedAt: new Date("2023-12-25"),
     type: "image" as const,
     size: "4.2 MB",
-    tags: ["christmas", "presents", "holiday"]
-  }
+    tags: ["christmas", "presents", "holiday"],
+  },
 ];
 
-const Photos = () => {
+const Media = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [photos, setPhotos] = useState(mockPhotos);
   const [showMetadataDialog, setShowMetadataDialog] = useState(false);
   const [pendingFile, setPendingFile] = useState<{
     file: File;
     preview: string;
-    type: 'image' | 'video';
+    type: "image" | "video";
   } | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -387,7 +402,7 @@ const Photos = () => {
     dateRange: { start: "", end: "" },
     tags: [] as string[],
     sortBy: "newest",
-    type: "all" // all, image, video
+    type: "all", // all, image, video
   });
 
   // Mock storage data - would come from backend
@@ -399,13 +414,13 @@ const Photos = () => {
   const handleFileUpload = (files: File[]) => {
     const file = files[0]; // Handle one file at a time for metadata collection
     if (file) {
-      const isVideo = file.type.startsWith('video/');
+      const isVideo = file.type.startsWith("video/");
       const reader = new FileReader();
       reader.onload = (e) => {
         setPendingFile({
           file,
           preview: e.target?.result as string,
-          type: isVideo ? 'video' : 'image'
+          type: isVideo ? "video" : "image",
         });
         setShowMetadataDialog(true);
       };
@@ -428,7 +443,7 @@ const Photos = () => {
         uploadedAt: new Date(),
         type: pendingFile.type,
         size: `${(pendingFile.file.size / (1024 * 1024)).toFixed(1)} MB`,
-        tags: ["new-upload"]
+        tags: ["new-upload"],
       };
       setPhotos((prev) => [newPhoto, ...prev]);
       setPendingFile(null);
@@ -446,31 +461,40 @@ const Photos = () => {
   };
 
   // Filter photos based on search and filters
-  const filteredPhotos = photos.filter((photo) => {
-    const matchesSearch = 
-      photo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      photo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      photo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredPhotos = photos
+    .filter((photo) => {
+      const matchesSearch =
+        photo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        photo.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        photo.tags.some((tag) =>
+          tag.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
-    const matchesUploader = !filters.uploader || 
-      photo.uploadedBy.toLowerCase().includes(filters.uploader.toLowerCase());
+      const matchesUploader =
+        !filters.uploader ||
+        photo.uploadedBy.toLowerCase().includes(filters.uploader.toLowerCase());
 
-    const matchesType = filters.type === "all" || photo.type === filters.type;
+      const matchesType = filters.type === "all" || photo.type === filters.type;
 
-    const matchesDateRange = !filters.dateRange.start || !filters.dateRange.end ||
-      (photo.uploadedAt >= new Date(filters.dateRange.start) && 
-       photo.uploadedAt <= new Date(filters.dateRange.end));
+      const matchesDateRange =
+        !filters.dateRange.start ||
+        !filters.dateRange.end ||
+        (photo.uploadedAt >= new Date(filters.dateRange.start) &&
+          photo.uploadedAt <= new Date(filters.dateRange.end));
 
-    return matchesSearch && matchesUploader && matchesType && matchesDateRange;
-  }).sort((a, b) => {
-    switch (filters.sortBy) {
-      case "oldest":
-        return a.uploadedAt.getTime() - b.uploadedAt.getTime();
-      case "newest":
-      default:
-        return b.uploadedAt.getTime() - a.uploadedAt.getTime();
-    }
-  });
+      return (
+        matchesSearch && matchesUploader && matchesType && matchesDateRange
+      );
+    })
+    .sort((a, b) => {
+      switch (filters.sortBy) {
+        case "oldest":
+          return a.uploadedAt.getTime() - b.uploadedAt.getTime();
+        case "newest":
+        default:
+          return b.uploadedAt.getTime() - a.uploadedAt.getTime();
+      }
+    });
 
   const handleFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
@@ -482,7 +506,7 @@ const Photos = () => {
       dateRange: { start: "", end: "" },
       tags: [],
       sortBy: "newest",
-      type: "all"
+      type: "all",
     });
     setSearchTerm("");
   };
@@ -504,11 +528,11 @@ const Photos = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-            <StorageMetrics
+            {/* <StorageMetrics
               usedStorage={storageData.used}
               totalStorage={storageData.total}
               className="flex-1 lg:w-80"
-            />
+            /> */}
             <Button
               onClick={() => setShowUpload(!showUpload)}
               className="bg-rose-500 hover:bg-rose-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
@@ -531,13 +555,13 @@ const Photos = () => {
                 className="pl-10"
               />
             </div>
-            
+
             <div className="flex gap-2">
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" className="flex items-center">
                     <Filter className="h-4 w-4 mr-2" />
-                    Advanced Filters
+                    Filters
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[400px] sm:w-[500px]">
@@ -548,11 +572,15 @@ const Photos = () => {
                     </SheetDescription>
                   </SheetHeader>
                   <div className="mt-6 space-y-6">
-                    <PhotoFilters 
+                    <PhotoFilters
                       onFilterChange={handleFilterChange}
                       currentFilters={filters}
                     />
-                    <Button onClick={clearFilters} variant="outline" className="w-full">
+                    <Button
+                      onClick={clearFilters}
+                      variant="outline"
+                      className="w-full"
+                    >
                       Clear All Filters
                     </Button>
                   </div>
@@ -563,7 +591,9 @@ const Photos = () => {
                 <Button
                   variant={filters.type === "all" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setFilters(prev => ({ ...prev, type: "all" }))}
+                  onClick={() =>
+                    setFilters((prev) => ({ ...prev, type: "all" }))
+                  }
                   className="rounded-r-none"
                 >
                   All
@@ -571,7 +601,9 @@ const Photos = () => {
                 <Button
                   variant={filters.type === "image" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setFilters(prev => ({ ...prev, type: "image" }))}
+                  onClick={() =>
+                    setFilters((prev) => ({ ...prev, type: "image" }))
+                  }
                   className="rounded-none"
                 >
                   <Image className="h-4 w-4" />
@@ -579,7 +611,9 @@ const Photos = () => {
                 <Button
                   variant={filters.type === "video" ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setFilters(prev => ({ ...prev, type: "video" }))}
+                  onClick={() =>
+                    setFilters((prev) => ({ ...prev, type: "video" }))
+                  }
                   className="rounded-l-none"
                 >
                   <Video className="h-4 w-4" />
@@ -589,7 +623,10 @@ const Photos = () => {
           </div>
 
           {/* Active Filters Display */}
-          {(searchTerm || filters.uploader || filters.type !== "all" || filters.dateRange.start) && (
+          {(searchTerm ||
+            filters.uploader ||
+            filters.type !== "all" ||
+            filters.dateRange.start) && (
             <div className="flex flex-wrap gap-2 mt-4">
               {searchTerm && (
                 <div className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm">
@@ -624,7 +661,8 @@ const Photos = () => {
               maxSize={50}
             />
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Supported formats: JPEG, PNG, GIF, MP4, MOV, AVI. Max size: 50MB per file.
+              Supported formats: JPEG, PNG, GIF, MP4, MOV, AVI. Max size: 50MB
+              per file.
             </p>
           </div>
         )}
@@ -639,13 +677,13 @@ const Photos = () => {
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-3xl font-bold text-blue-500 mb-2">
-              {filteredPhotos.filter(p => p.type === 'image').length}
+              {filteredPhotos.filter((p) => p.type === "image").length}
             </div>
             <div className="text-gray-600 dark:text-gray-400">Photos</div>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-3xl font-bold text-purple-500 mb-2">
-              {filteredPhotos.filter(p => p.type === 'video').length}
+              {filteredPhotos.filter((p) => p.type === "video").length}
             </div>
             <div className="text-gray-600 dark:text-gray-400">Videos</div>
           </div>
@@ -660,7 +698,10 @@ const Photos = () => {
         {/* Media Gallery */}
         {filteredPhotos.length > 0 ? (
           <div className="max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <PhotoGallery photos={filteredPhotos} onRemove={handlePhotoRemove} />
+            <PhotoGallery
+              photos={filteredPhotos}
+              onRemove={handlePhotoRemove}
+            />
           </div>
         ) : (
           <div className="text-center py-16">
@@ -671,8 +712,8 @@ const Photos = () => {
               No media found
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {searchTerm || filters.uploader || filters.type !== "all" 
-                ? "Try adjusting your search or filters to find more content." 
+              {searchTerm || filters.uploader || filters.type !== "all"
+                ? "Try adjusting your search or filters to find more content."
                 : "Start building your family media collection"}
             </p>
             <Button
@@ -696,4 +737,4 @@ const Photos = () => {
   );
 };
 
-export default Photos;
+export default Media;

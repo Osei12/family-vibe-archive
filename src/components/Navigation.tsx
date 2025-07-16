@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -16,17 +15,17 @@ import UserDropdown from "./UserDropdown";
 import LightLogo from "@/assets/logo/logo-2.webp";
 import DarkLogo from "@/assets/logo/logo-3.webp";
 
+export const navItems = [
+  // { path: "/", label: "Home", icon: Home },
+  { path: "/media", label: "Media", icon: Camera },
+  { path: "/documents", label: "Documents", icon: FileText },
+  { path: "/messages", label: "Messages", icon: MessageCircle },
+  { path: "/admin", label: "Admin", icon: Heart },
+];
+
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-
-  const navItems = [
-    { path: "/", label: "Home", icon: Home },
-    { path: "/photos", label: "Photos", icon: Camera },
-    { path: "/documents", label: "Documents", icon: FileText },
-    { path: "/messages", label: "Messages", icon: MessageCircle },
-    { path: "/admin", label: "Admin", icon: Heart },
-  ];
 
   const isActive = (path: string) => location.pathname === path;
 

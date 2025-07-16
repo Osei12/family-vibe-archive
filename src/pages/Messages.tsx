@@ -174,7 +174,7 @@ const Messages = () => {
         </div>
 
         {/* New Message */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+        {/* <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
             <MessageCircle className="h-5 w-5 mr-2" />
             Share with Family
@@ -195,7 +195,7 @@ const Messages = () => {
               Send
             </Button>
           </div>
-        </div>
+        </div> */}
 
         <div className="mb-8 bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">

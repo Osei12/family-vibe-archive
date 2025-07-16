@@ -1,9 +1,8 @@
-
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import PinAuth from './PinAuth';
-import { useSessionTimeout } from '@/hooks/useSessionTimeout';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import PinAuth from "./PinAuth";
+import { useSessionTimeout } from "@/hooks/useSessionTimeout";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -16,13 +15,13 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
   const { isAuthenticated } = useAuth();
 
   // Don't show session timeout on login/signup pages
-  const publicRoutes = ['/login', '/signup'];
+  const publicRoutes = ["/login", "/signup"];
   const isPublicRoute = publicRoutes.includes(location.pathname);
-  
+
   // Redirect logged-in users away from landing page
   useEffect(() => {
-    if (isAuthenticated && location.pathname === '/') {
-      navigate('/photos');
+    if (isAuthenticated && location.pathname === "/") {
+      navigate("/media");
     }
   }, [isAuthenticated, location.pathname, navigate]);
 
@@ -32,7 +31,7 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
       if (isAuthenticated && !isPublicRoute) {
         setShowPinAuth(true);
       }
-    }
+    },
   });
 
   const handleAuthenticated = () => {
@@ -42,7 +41,7 @@ const AuthWrapper = ({ children }: AuthWrapperProps) => {
 
   const handleLogout = () => {
     setShowPinAuth(false);
-    navigate('/login');
+    navigate("/login");
   };
 
   // Reset timer on route change (user activity)

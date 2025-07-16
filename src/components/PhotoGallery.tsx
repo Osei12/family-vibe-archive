@@ -2,22 +2,25 @@ import { useState } from "react";
 import { X, Download, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface Photo {
+export interface PhotoType {
   id: string;
   url: string;
   title: string;
   description?: string;
   uploadedBy: string;
   uploadedAt: Date;
+  type: "image" | "video"; // ✅ fixed
+  size: string;
+  tags: string[];
 }
 
 interface PhotoGalleryProps {
-  photos: Photo[];
+  photos: PhotoType[];
   onRemove: (id: string) => void;
 }
 
 const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<PhotoType | null>(null);
   const [likedPhotos, setLikedPhotos] = useState<Set<string>>(new Set());
 
   const toggleLike = (photoId: string) => {
@@ -40,11 +43,22 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
             className="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             onClick={() => setSelectedPhoto(photo)}
           >
-            <img
-              src={photo.url}
-              alt={photo.title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+            {photo.type === "image" ? (
+              <img
+                src={photo.url}
+                alt={photo.title}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <video
+                src={photo.url}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                muted
+                playsInline
+                preload="metadata"
+              />
+            )}
+
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <h3 className="text-white text-sm font-medium truncate">
@@ -69,6 +83,7 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
                 }`}
               />
             </button>
+
             {/* Delete button */}
             <button
               onClick={(e) => {
@@ -77,31 +92,34 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
               }}
               className="absolute top-3 left-3 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110"
             >
-              <X
-                className={`h-4 w-4 ${
-                  likedPhotos.has(photo.id)
-                    ? "text-red-500 fill-current"
-                    : "text-gray-600"
-                }`}
-              />
+              <X className="h-4 w-4 text-gray-600" />
             </button>
           </div>
         ))}
       </div>
 
-      {/* Photo Modal */}
+      {/* Photo/Video Modal */}
       {selectedPhoto && (
         <div
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setSelectedPhoto(null)}
         >
           <div className="relative max-w-4xl max-h-full w-full h-full flex items-center justify-center">
-            <img
-              src={selectedPhoto.url}
-              alt={selectedPhoto.title}
-              className="max-w-full max-h-full object-contain rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+            {selectedPhoto.type === "image" ? (
+              <img
+                src={selectedPhoto.url}
+                alt={selectedPhoto.title}
+                className="max-w-full max-h-full object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <video
+                src={selectedPhoto.url}
+                controls
+                className="max-w-full max-h-full object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
 
             {/* Close button */}
             <Button
@@ -113,7 +131,7 @@ const PhotoGallery = ({ photos, onRemove }: PhotoGalleryProps) => {
               <X className="h-6 w-6" />
             </Button>
 
-            {/* Photo info */}
+            {/* Info section */}
             <div className="absolute bottom-4 left-4 right-4 bg-black/80 text-white p-4 rounded-lg backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-2">
                 {selectedPhoto.title}

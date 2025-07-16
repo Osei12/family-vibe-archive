@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +7,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import AuthWrapper from "./components/AuthWrapper";
 import Index from "./pages/Index";
-import Photos from "./pages/Photos";
+import Media from "./pages/Media";
 import Documents from "./pages/Documents";
 import Messages from "./pages/Messages";
 import Admin from "./pages/Admin";
@@ -30,19 +29,19 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <AuthWrapper>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/photos" element={<Photos />} />
-              <Route path="/documents" element={<Documents />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/admin/*" element={<Admin />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/media" element={<Media />} />
+                <Route path="/documents" element={<Documents />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/admin/*" element={<Admin />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
             </AuthWrapper>
           </AuthProvider>
         </BrowserRouter>
