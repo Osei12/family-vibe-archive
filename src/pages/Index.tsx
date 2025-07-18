@@ -328,6 +328,10 @@ const Index = () => {
 
       {/* Stats Section */}
       <section className="py-16 bg-gradient-to-br from-gray-50 to-white backdrop-blur-sm">
+        <p className="text-sm text-center text-gray-600 dark:text-neutral-400 max-w-4xl mx-auto leading-relaxed mb-8">
+          Join thousands of families who trust us to keep their memories safe
+          and accessible. Go ahead, it's FREE to start.
+        </p>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -433,6 +437,9 @@ const Index = () => {
               Our platform brings families closer together with simple,
               beautiful tools for sharing what matters most.
             </p>
+            <p className="line-through">
+              No Ads, No Tracking, No Public Access
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -479,7 +486,7 @@ const Index = () => {
               <Shield className="h-8 w-8 text-green-500 dark:text-green-400" />
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Private & Secure
+              Permanent & Secure
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Your family's privacy is our priority. All data is encrypted and
@@ -552,23 +559,23 @@ const Index = () => {
             Ready to Start Building Memories?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join your family in creating a digital space filled with love,
-            memories, and connection.
+            Start your family on a journey to creating a private, permanent and
+            secure digital space filled with love, memories and connection.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/photos">
-              <Button className="bg-white text-rose-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg hover:scale-105 transition-all duration-300">
-                Upload Your First Photo
+            <Link to="/pricing">
+              <Button className="bg-rose-500 text-white hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg hover:scale-105 transition-all duration-300">
+                Get Started For Free
               </Button>
             </Link>
-            <Link to="/messages">
+            {/* <Link to="/messages">
               <Button
                 variant="ghost"
                 className="border-white text-white hover:bg-white hover:text-rose-600 px-8 py-3 text-lg font-semibold hover:scale-105 transition-all duration-300"
               >
                 Share a Message
               </Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
